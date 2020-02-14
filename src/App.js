@@ -7,7 +7,7 @@ function App() {
 
   const audioPlayerRef = useRef();
   const handleStartLoop = () => {
-    audioPlayerRef.current.fastSeek(startTime);
+    audioPlayerRef.current.currentTime = startTime;
     audioPlayerRef.current.play();
   };
 

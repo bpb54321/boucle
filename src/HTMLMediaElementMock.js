@@ -28,9 +28,6 @@ window.HTMLMediaElement.prototype.advanceAudioPlayer = function() {
     }, timeIncrement * 1000);
   }
 };
-window.HTMLMediaElement.prototype.fastSeek = function(time) {
-  this.currentTime = time;
-};
 window.HTMLMediaElement.prototype.play = function() {
   this.paused = false;
   this.advanceAudioPlayer();
