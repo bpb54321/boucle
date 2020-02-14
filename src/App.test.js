@@ -6,11 +6,13 @@ import "./HTMLMediaElementMock";
 
 describe("App", () => {
   test("allows you to play one iteration of a loop", async () => {
-    // Arrange
     jest.useFakeTimers();
-    window.HTMLMediaElement.prototype.duration = 4;
-    const startTimeInputValue = 1;
-    const endTimeInputValue = 2;
+    // Arrange
+    const mediaDuration = 10;
+    const randomStartTime = Math.floor(Math.random() * mediaDuration);
+    window.HTMLMediaElement.prototype.duration = mediaDuration;
+    const startTimeInputValue = randomStartTime;
+    const endTimeInputValue = startTimeInputValue + 1;
     const loopLength = endTimeInputValue - startTimeInputValue;
 
     const playSpy = jest
@@ -41,10 +43,10 @@ describe("App", () => {
     expect(playSpy).toHaveBeenCalledTimes(1);
 
     // Act
-    jest.advanceTimersByTime(loopLength * 1000);
+    jest.runAllTimers();
 
     // Assert
     expect(pauseSpy).toHaveBeenCalledTimes(1);
-    expect(Math.round(audioPlayer.currentTime)).toBe(endTimeInputValue);
+    expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
   });
 });

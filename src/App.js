@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
 
   const audioPlayerRef = useRef();
   const handleStartLoop = () => {
@@ -15,7 +16,7 @@ function App() {
   };
 
   const onTimeUpdate = event => {
-    if (audioPlayerRef.current.currentTime >= 2) {
+    if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
       audioPlayerRef.current.pause();
     }
   };
@@ -43,7 +44,14 @@ function App() {
           }}
         />
         <label htmlFor="loop-end-time">Loop End Time</label>
-        <input id="loop-end-time" type="number" />
+        <input
+          id="loop-end-time"
+          type="number"
+          value={endTime}
+          onChange={event => {
+            onValueChange(event, setEndTime);
+          }}
+        />
         <button onClick={handleStartLoop}>Start Loop</button>
       </main>
     </div>
