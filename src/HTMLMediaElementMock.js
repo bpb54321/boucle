@@ -1,5 +1,5 @@
 Object.defineProperty(window.HTMLMediaElement.prototype, "duration", {
-  value: 4,
+  value: 0,
   writable: true
 });
 Object.defineProperty(window.HTMLMediaElement.prototype, "currentTime", {
@@ -14,18 +14,21 @@ Object.defineProperty(window.HTMLMediaElement.prototype, "ended", {
   value: false,
   writable: true
 });
+window.HTMLMediaElement.prototype.defaultMockTimeIncrement = 1;
 window.HTMLMediaElement.prototype.advanceAudioPlayer = function() {
-  const timeIncrement = 0.1;
+  if (!this.mockTimeIncrement) {
+    this.mockTimeIncrement = this.defaultMockTimeIncrement;
+  }
   if (Math.floor(this.currentTime) === this.duration) {
     this.ended = true;
     return;
   }
   if (!this.paused && !this.ended) {
-    this.currentTime += timeIncrement;
-    this.dispatchEvent(new window.Event("timeupdate"));
     setTimeout(() => {
+      this.currentTime += this.mockTimeIncrement;
+      this.dispatchEvent(new window.Event("timeupdate"));
       this.advanceAudioPlayer();
-    }, timeIncrement * 1000);
+    }, this.mockTimeIncrement * 1000);
   }
 };
 window.HTMLMediaElement.prototype.play = function() {

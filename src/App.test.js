@@ -5,25 +5,39 @@ import userEvent from "@testing-library/user-event";
 import "./HTMLMediaElementMock";
 
 describe("App", () => {
-  test("allows you to play one iteration of a loop", async () => {
+  let mediaDuration;
+  let playSpy;
+  let pauseSpy;
+  let mediaDefaultStartTime;
+
+  beforeEach(() => {
     jest.useFakeTimers();
-    // Arrange
-    const mediaDuration = 10;
+    jest.resetAllMocks();
+
+    mediaDuration = 10;
     window.HTMLMediaElement.prototype.duration = mediaDuration;
-    const defaultMediaElementStartTime = 0;
-    window.HTMLMediaElement.prototype.currentTime = defaultMediaElementStartTime;
 
-    const randomStartTime = Math.floor(Math.random() * mediaDuration);
+    mediaDefaultStartTime = 0;
+    window.HTMLMediaElement.prototype.currentTime = mediaDefaultStartTime;
 
-    const startTimeInputValue = randomStartTime;
-    const endTimeInputValue = startTimeInputValue + 1;
+    // HTMLMediaElement will dispatch timeupdate with this time frequency
+    window.HTMLMediaElement.prototype.mockTimeIncrement = 0.5; // seconds
 
-    const playSpy = jest
+    playSpy = jest
       .spyOn(window.HTMLMediaElement.prototype, "play")
       .mockName("play");
-    const pauseSpy = jest
+    pauseSpy = jest
       .spyOn(window.HTMLMediaElement.prototype, "pause")
       .mockName("pause");
+  });
+
+  test("plays an infinite number of loops when user presses start", async () => {
+    // Arrange
+    const randomStartTime = Math.floor(Math.random() * mediaDuration);
+    const loopDuration = 1;
+    const startTimeInputValue = randomStartTime;
+    const endTimeInputValue = startTimeInputValue + loopDuration;
+    const expectedLoopDuration = endTimeInputValue - startTimeInputValue;
 
     // Act
     const { findByTestId, findByLabelText, findByText } = render(<App />);
@@ -34,10 +48,7 @@ describe("App", () => {
     const startLoopButton = await findByText(/start loop/i);
 
     // Assert
-    expect(audioPlayer.currentTime).toBeCloseTo(
-      defaultMediaElementStartTime,
-      0
-    );
+    expect(audioPlayer.currentTime).toBeCloseTo(mediaDefaultStartTime, 0);
 
     // Act
     await userEvent.type(loopStartTimeElement, String(startTimeInputValue));
@@ -50,7 +61,7 @@ describe("App", () => {
 
     // Act
     // Simulate the audio being played
-    jest.runAllTimers();
+    jest.advanceTimersByTime(expectedLoopDuration * 1000);
 
     // Assert
     expect(pauseSpy).toHaveBeenCalledTimes(1);

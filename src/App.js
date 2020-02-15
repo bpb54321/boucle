@@ -18,6 +18,7 @@ function App() {
   const onTimeUpdate = event => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
       audioPlayerRef.current.pause();
+      // handleStartLoop();
     }
   };
 
