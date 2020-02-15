@@ -9,19 +9,21 @@ describe("App", () => {
   let playSpy;
   let pauseSpy;
   let mediaDefaultStartTime;
+  let mockTimeIncrement;
 
   beforeEach(() => {
     jest.useFakeTimers();
     jest.resetAllMocks();
 
-    mediaDuration = 10;
+    mediaDuration = 60;
     window.HTMLMediaElement.prototype.duration = mediaDuration;
 
     mediaDefaultStartTime = 0;
     window.HTMLMediaElement.prototype.currentTime = mediaDefaultStartTime;
 
     // HTMLMediaElement will dispatch timeupdate with this time frequency
-    window.HTMLMediaElement.prototype.mockTimeIncrement = 0.5; // seconds
+    mockTimeIncrement = 0.5;
+    window.HTMLMediaElement.prototype.mockTimeIncrement = mockTimeIncrement; // seconds
 
     playSpy = jest
       .spyOn(window.HTMLMediaElement.prototype, "play")
@@ -31,16 +33,21 @@ describe("App", () => {
       .mockName("pause");
   });
 
-  test("plays an infinite number of loops when user presses start", async () => {
+  test("plays an infinite number of loops when user presses start, with pause in between", async () => {
     // Arrange
-    const randomStartTime = Math.floor(Math.random() * mediaDuration);
-    const loopDuration = 1;
+    const randomStartTime = Math.floor(Math.random() * (mediaDuration / 2));
+    const loopDuration = 2;
+    const pauseTimeBetweenLoops = 1;
     const startTimeInputValue = randomStartTime;
     const endTimeInputValue = startTimeInputValue + loopDuration;
-    const expectedLoopDuration = endTimeInputValue - startTimeInputValue;
+
+    // Used for calculated how many timers to run to simulate the player loop period
+    const numTimerStepsInLoop = loopDuration / mockTimeIncrement;
 
     // Act
-    const { findByTestId, findByLabelText, findByText } = render(<App />);
+    const { findByTestId, findByLabelText, findByText } = render(
+      <App pauseTimeBetweenLoops={pauseTimeBetweenLoops} />
+    );
 
     const audioPlayer = await findByTestId("audio-player");
     const loopStartTimeElement = await findByLabelText(/loop start time/i);
@@ -60,11 +67,30 @@ describe("App", () => {
     expect(playSpy).toHaveBeenCalledTimes(1);
 
     // Act
-    // Simulate the audio being played
-    jest.advanceTimersByTime(expectedLoopDuration * 1000);
+    for (let timerStep = 0; timerStep < numTimerStepsInLoop; timerStep++) {
+      jest.runOnlyPendingTimers();
+    }
 
     // Assert
-    expect(pauseSpy).toHaveBeenCalledTimes(1);
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
+    expect(pauseSpy).toHaveBeenCalledTimes(1);
+
+    // Act
+    // Run the timer that is run at the end of the pause
+    jest.runOnlyPendingTimers();
+
+    expect(audioPlayer.currentTime).toBeCloseTo(startTimeInputValue, 0);
+    expect(playSpy).toHaveBeenCalledTimes(2);
+
+    // Act
+    for (let timerStep = 0; timerStep < numTimerStepsInLoop; timerStep++) {
+      jest.runOnlyPendingTimers();
+    }
+
+    // Assert
+    expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
+    expect(pauseSpy).toHaveBeenCalledTimes(2);
+
+    // Etc
   });
 });

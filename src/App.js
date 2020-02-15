@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import "./App.css";
 
-function App() {
+function App({ pauseTimeBetweenLoops, ...props }) {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
 
@@ -18,7 +18,11 @@ function App() {
   const onTimeUpdate = event => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
       audioPlayerRef.current.pause();
-      // handleStartLoop();
+
+      setTimeout(() => {
+        audioPlayerRef.current.currentTime = startTime;
+        audioPlayerRef.current.play();
+      }, pauseTimeBetweenLoops * 1000);
     }
   };
 
