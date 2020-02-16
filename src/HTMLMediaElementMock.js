@@ -16,6 +16,7 @@ Object.defineProperty(window.HTMLMediaElement.prototype, "ended", {
 });
 window.HTMLMediaElement.prototype.defaultMockTimeIncrement = 1;
 window.HTMLMediaElement.prototype.advanceAudioPlayer = function() {
+  console.log(`In advanceAudioPlayer`);
   if (!this.mockTimeIncrement) {
     this.mockTimeIncrement = this.defaultMockTimeIncrement;
   }
@@ -24,7 +25,9 @@ window.HTMLMediaElement.prototype.advanceAudioPlayer = function() {
     return;
   }
   if (!this.paused && !this.ended) {
+    console.log(`setting timeout in audio player`);
     setTimeout(() => {
+      console.log(`executing timeout in audio player`);
       this.currentTime += this.mockTimeIncrement;
       this.dispatchEvent(new window.Event("timeupdate"));
       this.advanceAudioPlayer();
