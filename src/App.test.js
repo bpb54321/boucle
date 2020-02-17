@@ -47,7 +47,7 @@ describe("App", () => {
     const audioPlayer = await findByTestId("audio-player");
     const loopStartTimeElement = await findByLabelText(/loop start time/i);
     const loopEndTimeElement = await findByLabelText(/loop end time/i);
-    const startLoopButton = await findByText(/start loop/i);
+    const startLoopButton = await findByText(/start/i);
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(mediaDefaultStartTime, 0);
@@ -110,8 +110,8 @@ describe("App", () => {
     const audioPlayer = await findByTestId("audio-player");
     const loopStartTimeElement = await findByLabelText(/loop start time/i);
     const loopEndTimeElement = await findByLabelText(/loop end time/i);
-    const startLoopButton = await findByText(/start loop/i);
-    const stopLoopButton = await findByText(/stop loop/i);
+    const startLoopButton = await findByText(/start/i);
+    const stopLoopButton = await findByText(/stop/i);
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(mediaDefaultStartTime, 0);
@@ -162,5 +162,12 @@ describe("App", () => {
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
     expect(audioPlayer.pause).toHaveBeenCalledTimes(2);
     expect(audioPlayer.play).toHaveBeenCalledTimes(1);
+  });
+
+  test("has a textarea", async () => {
+    const { findByTestId } = render(<App />);
+    const transcriptionArea = await findByTestId("transcription-area");
+    expect(transcriptionArea).toBeInTheDocument();
+    expect(transcriptionArea.tagName).toBe("TEXTAREA");
   });
 });

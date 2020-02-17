@@ -46,32 +46,44 @@ function App({ pauseTimeBetweenLoops, ...props }) {
           ref={audioPlayerRef}
           data-testid={"audio-player"}
           controls
-          src="la-saison-des-caucus-et-des-primaires-aux-eta.mp4"
+          src="justice-le-role-incontournable-du-dpcp.mp4"
           onTimeUpdate={onTimeUpdate}
         >
           Your browser does not support the
           <code>audio</code> element.
         </audio>
-        <label htmlFor="loop-start-time">Loop Start Time</label>
-        <input
-          id="loop-start-time"
-          type="number"
-          value={startTime}
-          onChange={event => {
-            onValueChange(event, setStartTime);
+        <form
+          onSubmit={event => {
+            event.preventDefault();
           }}
-        />
-        <label htmlFor="loop-end-time">Loop End Time</label>
-        <input
-          id="loop-end-time"
-          type="number"
-          value={endTime}
-          onChange={event => {
-            onValueChange(event, setEndTime);
-          }}
-        />
-        <button onClick={handleStartLoop}>Start Loop</button>
-        <button onClick={handleStopLoop}>Stop Loop</button>
+        >
+          <label htmlFor="loop-start-time">Loop Start Time</label>
+          <input
+            id="loop-start-time"
+            type="number"
+            value={startTime}
+            onChange={event => {
+              onValueChange(event, setStartTime);
+            }}
+          />
+          <label htmlFor="loop-end-time">Loop End Time</label>
+          <input
+            id="loop-end-time"
+            type="number"
+            value={endTime}
+            onChange={event => {
+              onValueChange(event, setEndTime);
+            }}
+          />
+          <button onClick={handleStartLoop}>Start</button>
+          <button onClick={handleStopLoop}>Stop</button>
+          <div>
+            <textarea
+              className="App__textarea"
+              data-testid="transcription-area"
+            ></textarea>
+          </div>
+        </form>
       </main>
     </div>
   );
