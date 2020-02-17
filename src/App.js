@@ -1,39 +1,40 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import "./App.css";
 
 function App({ pauseTimeBetweenLoops, ...props }) {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isStopped, setIsStopped] = useState(false);
+  const [finishedBreak, setFinishedBreak] = useState(false);
 
   const audioPlayerRef = useRef();
-  const handleStartLoop = () => {
+  const handleStartLoop = useCallback(() => {
     audioPlayerRef.current.currentTime = startTime;
     audioPlayerRef.current.play();
-  };
+  }, [startTime]);
 
-  const handleStopLoop = () => {
+  function handleStopLoop() {
     audioPlayerRef.current.pause();
     setIsStopped(true);
-  };
+  }
 
   const onValueChange = (event, setterFunction) => {
     setterFunction(parseInt(event.target.value));
   };
 
+  useEffect(() => {
+    if (!isStopped && finishedBreak) {
+      handleStartLoop();
+    }
+  }, [isStopped, finishedBreak, handleStartLoop]);
+
   const onTimeUpdate = event => {
-    console.log(`in timeupdate`);
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
-      console.log(`pausing audio at endTime`);
       audioPlayerRef.current.pause();
+      setFinishedBreak(false);
 
       setTimeout(() => {
-        console.log(`executing callback after pause`);
-        if (!isStopped) {
-          console.log(`restarting the playback from beginning`);
-          audioPlayerRef.current.currentTime = startTime;
-          audioPlayerRef.current.play();
-        }
+        setFinishedBreak(true);
       }, pauseTimeBetweenLoops * 1000);
     }
   };

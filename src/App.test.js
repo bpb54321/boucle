@@ -1,28 +1,19 @@
+import "./HTMLMediaElementMock";
 import React from "react";
 import { render, wait } from "@testing-library/react";
 import App from "./App";
 import userEvent from "@testing-library/user-event";
-import "./HTMLMediaElementMock";
 import { act } from "react-dom/test-utils";
 
 describe("App", () => {
   let mediaDuration;
-  let playSpy;
-  let pauseSpy;
   let mediaDefaultStartTime;
   let mockTimeIncrement;
 
   beforeEach(() => {
     jest.useFakeTimers();
-    // console.log(`after useFakeTimers`);
-    // console.log(jest.getTimerCount());
-    jest.resetAllMocks();
-    // console.log(`after reset all mocks`);
-    // console.log(jest.getTimerCount());
-
+    jest.clearAllMocks();
     jest.clearAllTimers();
-    // console.log(`after clear all timers`);
-    // console.log(jest.getTimerCount());
 
     mediaDuration = 60;
     window.HTMLMediaElement.prototype.duration = mediaDuration;
@@ -34,12 +25,7 @@ describe("App", () => {
     mockTimeIncrement = 0.5;
     window.HTMLMediaElement.prototype.mockTimeIncrement = mockTimeIncrement; // seconds
 
-    playSpy = jest
-      .spyOn(window.HTMLMediaElement.prototype, "play")
-      .mockName("play");
-    pauseSpy = jest
-      .spyOn(window.HTMLMediaElement.prototype, "pause")
-      .mockName("pause");
+    // HTMLMediaElement play and pause functions are mocked
   });
 
   test("plays an infinite number of loops when user presses start, with pause in between", async () => {
@@ -73,7 +59,7 @@ describe("App", () => {
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(startTimeInputValue, 0);
-    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(audioPlayer.play).toHaveBeenCalledTimes(1);
 
     // Act
     for (let timerStep = 0; timerStep < numTimerStepsInLoop; timerStep++) {
@@ -82,14 +68,16 @@ describe("App", () => {
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
-    expect(pauseSpy).toHaveBeenCalledTimes(1);
+    expect(audioPlayer.pause).toHaveBeenCalledTimes(1);
 
     // Act
     // Run the timer that is run at the end of the pause
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
 
     expect(audioPlayer.currentTime).toBeCloseTo(startTimeInputValue, 0);
-    expect(playSpy).toHaveBeenCalledTimes(2);
+    expect(audioPlayer.play).toHaveBeenCalledTimes(2);
 
     // Act
     for (let timerStep = 0; timerStep < numTimerStepsInLoop; timerStep++) {
@@ -98,12 +86,12 @@ describe("App", () => {
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
-    expect(pauseSpy).toHaveBeenCalledTimes(2);
+    expect(audioPlayer.pause).toHaveBeenCalledTimes(2);
 
     // Etc
   });
 
-  test.only("stops the loop when the user presses stop", async () => {
+  test("stops the loop when the user presses stop", async () => {
     // Arrange
     const randomStartTime = Math.floor(Math.random() * (mediaDuration / 2));
     const loopDuration = 2;
@@ -135,17 +123,16 @@ describe("App", () => {
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(startTimeInputValue, 0);
-    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(audioPlayer.play).toHaveBeenCalledTimes(1);
 
     // Act
     for (let timerStep = 0; timerStep < numTimerStepsInLoop; timerStep++) {
-      console.log(`timerStep ${timerStep}`);
       jest.runOnlyPendingTimers();
     }
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
-    expect(pauseSpy).toHaveBeenCalledTimes(1);
+    expect(audioPlayer.pause).toHaveBeenCalledTimes(1);
 
     // Act
 
@@ -154,17 +141,16 @@ describe("App", () => {
       await userEvent.click(stopLoopButton);
     });
 
-    // Wait for isStopped state to update
-    // await wait();
-
     // Execute the callback that is called at the end of the pause
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
 
     // Players should still be at the last time, which is the end of the loop
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
 
     // Expect that play spy has not been called again
-    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(audioPlayer.play).toHaveBeenCalledTimes(1);
 
     // Act
     // Run pending timers again for good measure - there shouldn't be any callbacks to execute
@@ -174,7 +160,7 @@ describe("App", () => {
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
-    expect(pauseSpy).toHaveBeenCalledTimes(2);
-    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(audioPlayer.pause).toHaveBeenCalledTimes(2);
+    expect(audioPlayer.play).toHaveBeenCalledTimes(1);
   });
 });

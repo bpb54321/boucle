@@ -14,30 +14,32 @@ Object.defineProperty(window.HTMLMediaElement.prototype, "ended", {
   value: false,
   writable: true
 });
-window.HTMLMediaElement.prototype.defaultMockTimeIncrement = 1;
-window.HTMLMediaElement.prototype.advanceAudioPlayer = function() {
-  console.log(`In advanceAudioPlayer`);
-  if (!this.mockTimeIncrement) {
-    this.mockTimeIncrement = this.defaultMockTimeIncrement;
+Object.defineProperty(window.HTMLMediaElement.prototype, "advanceAudioPlayer", {
+  writable: true,
+  value: function() {
+    if (Math.floor(this.currentTime) === this.duration) {
+      this.ended = true;
+      return;
+    }
+    if (!this.paused && !this.ended) {
+      setTimeout(() => {
+        this.currentTime += this.mockTimeIncrement;
+        this.dispatchEvent(new window.Event("timeupdate"));
+        this.advanceAudioPlayer();
+      }, this.mockTimeIncrement * 1000);
+    }
   }
-  if (Math.floor(this.currentTime) === this.duration) {
-    this.ended = true;
-    return;
-  }
-  if (!this.paused && !this.ended) {
-    console.log(`setting timeout in audio player`);
-    setTimeout(() => {
-      console.log(`executing timeout in audio player`);
-      this.currentTime += this.mockTimeIncrement;
-      this.dispatchEvent(new window.Event("timeupdate"));
-      this.advanceAudioPlayer();
-    }, this.mockTimeIncrement * 1000);
-  }
-};
-window.HTMLMediaElement.prototype.play = function() {
-  this.paused = false;
-  this.advanceAudioPlayer();
-};
-window.HTMLMediaElement.prototype.pause = function() {
-  this.paused = true;
-};
+});
+Object.defineProperty(window.HTMLMediaElement.prototype, "play", {
+  writable: true,
+  value: jest.fn(function() {
+    this.paused = false;
+    this.advanceAudioPlayer();
+  })
+});
+Object.defineProperty(window.HTMLMediaElement.prototype, "pause", {
+  writable: true,
+  value: jest.fn(function() {
+    this.paused = true;
+  })
+});
