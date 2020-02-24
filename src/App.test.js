@@ -47,7 +47,7 @@ describe("App", () => {
     const audioPlayer = await findByTestId("audio-player");
     const loopStartTimeElement = await findByLabelText(/loop start time/i);
     const loopEndTimeElement = await findByLabelText(/loop end time/i);
-    const startLoopButton = await findByText(/start/i);
+    const startLoopButton = await findByTestId("start-loop-button");
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(mediaDefaultStartTime, 0);
@@ -91,7 +91,7 @@ describe("App", () => {
     // Etc
   });
 
-  test("stops the loop when the user presses stop", async () => {
+  test("stops the loop when the user presses stop during a pause", async () => {
     // Arrange
     const randomStartTime = Math.floor(Math.random() * (mediaDuration / 2));
     const loopDuration = 2;
@@ -110,8 +110,8 @@ describe("App", () => {
     const audioPlayer = await findByTestId("audio-player");
     const loopStartTimeElement = await findByLabelText(/loop start time/i);
     const loopEndTimeElement = await findByLabelText(/loop end time/i);
-    const startLoopButton = await findByText(/start/i);
-    const stopLoopButton = await findByText(/stop/i);
+    const startLoopButton = await findByTestId("start-loop-button");
+    const stopLoopButton = await findByTestId("stop-loop-button");
 
     // Assert
     expect(audioPlayer.currentTime).toBeCloseTo(mediaDefaultStartTime, 0);
@@ -162,6 +162,63 @@ describe("App", () => {
     expect(audioPlayer.currentTime).toBeCloseTo(endTimeInputValue, 0);
     expect(audioPlayer.pause).toHaveBeenCalledTimes(2);
     expect(audioPlayer.play).toHaveBeenCalledTimes(1);
+  });
+
+  test("when the user presses start after pressing stop, the loop plays again", async () => {
+    // Arrange
+    const randomStartTime = Math.floor(Math.random() * (mediaDuration / 2));
+    const loopDuration = 2;
+    const pauseTimeBetweenLoops = 1;
+    const startTimeInputValue = randomStartTime;
+    const endTimeInputValue = startTimeInputValue + loopDuration;
+
+    // Used for calculated how many timers to run to simulate the player loop period
+    const numTimerStepsInLoop = loopDuration / mockTimeIncrement;
+
+    // Act
+    const { findByTestId, findByLabelText, findByText } = render(
+      <App pauseTimeBetweenLoops={pauseTimeBetweenLoops} />
+    );
+
+    const audioPlayer = await findByTestId("audio-player");
+    const loopStartTimeElement = await findByLabelText(/loop start time/i);
+    const loopEndTimeElement = await findByLabelText(/loop end time/i);
+    const startLoopButton = await findByTestId("start-loop-button");
+    const stopLoopButton = await findByTestId("stop-loop-button");
+
+    // Assert
+    expect(audioPlayer.currentTime).toBeCloseTo(mediaDefaultStartTime, 0);
+
+    // Act
+    await userEvent.type(loopStartTimeElement, String(startTimeInputValue));
+    await userEvent.type(loopEndTimeElement, String(endTimeInputValue));
+    await userEvent.click(startLoopButton);
+
+    // Act
+    for (let timerStep = 0; timerStep < numTimerStepsInLoop; timerStep++) {
+      jest.runOnlyPendingTimers();
+    }
+
+    // Act
+
+    // Press stop button during the pause
+    await act(async () => {
+      await userEvent.click(stopLoopButton);
+    });
+
+    // Act
+    await userEvent.click(startLoopButton);
+
+    // Assert
+    expect(audioPlayer.play).toHaveBeenCalledTimes(2);
+
+    // Act - Advance time slightly
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    // Assert
+    expect(audioPlayer.currentTime).toBeGreaterThan(startTimeInputValue);
   });
 
   test("has a textarea", async () => {

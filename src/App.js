@@ -46,7 +46,7 @@ function App({ pauseTimeBetweenLoops, ...props }) {
           ref={audioPlayerRef}
           data-testid={"audio-player"}
           controls
-          src="justice-le-role-incontournable-du-dpcp.mp4"
+          src="les-plantes.webm"
           onTimeUpdate={onTimeUpdate}
         >
           Your browser does not support the
@@ -75,8 +75,12 @@ function App({ pauseTimeBetweenLoops, ...props }) {
               onValueChange(event, setEndTime);
             }}
           />
-          <button onClick={handleStartLoop}>Start</button>
-          <button onClick={handleStopLoop}>Stop</button>
+          <button onClick={handleStartLoop} data-testid="start-loop-button">
+            Start
+          </button>
+          <button onClick={handleStopLoop} data-testid="stop-loop-button">
+            Stop
+          </button>
           <div>
             <textarea
               className="App__textarea"
