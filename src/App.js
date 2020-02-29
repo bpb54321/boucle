@@ -46,7 +46,7 @@ function App({ pauseTimeBetweenLoops, ...props }) {
           ref={audioPlayerRef}
           data-testid={"audio-player"}
           controls
-          src="les-plantes.webm"
+          src="infoman-s20-e23.mp4"
           onTimeUpdate={onTimeUpdate}
         >
           Your browser does not support the
@@ -65,6 +65,7 @@ function App({ pauseTimeBetweenLoops, ...props }) {
             onChange={event => {
               onValueChange(event, setStartTime);
             }}
+            data-testid="loop-start-time"
           />
           <label htmlFor="loop-end-time">Loop End Time</label>
           <input
@@ -74,6 +75,7 @@ function App({ pauseTimeBetweenLoops, ...props }) {
             onChange={event => {
               onValueChange(event, setEndTime);
             }}
+            data-testid="loop-end-time"
           />
           <button onClick={handleStartLoop} data-testid="start-loop-button">
             Start
