@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import "./App.css";
 
-function App({ pauseTimeBetweenLoops, ...props }) {
+function App() {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
+  const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);
 
   const audioPlayerRef = useRef();
   const handleStartLoop = useCallback(() => {
@@ -27,6 +28,11 @@ function App({ pauseTimeBetweenLoops, ...props }) {
       handleStartLoop();
     }
   }, [isStopped, finishedBreak, handleStartLoop]);
+
+  useEffect(() => {
+    const loopDuration = endTime - startTime;
+    setPauseTimeBetweenLoops(loopDuration);
+  }, [startTime, endTime]);
 
   const onTimeUpdate = event => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
