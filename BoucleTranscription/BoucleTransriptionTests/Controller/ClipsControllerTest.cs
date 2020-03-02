@@ -8,7 +8,7 @@ using Xunit;
 
 namespace BoucleTransriptionTests
 {
-    public class ClipControllerTest
+    public class ClipsControllerTest
     {
         [Fact]
         public async Task get_clip_by_id_gets_the_correct_clip()
@@ -35,7 +35,7 @@ namespace BoucleTransriptionTests
 
             await using (var context = new BoucleDataContext(options))
             {
-                var clipController = new ClipController(context);
+                var clipController = new ClipsController(context);
 
                 var gotClip = await clipController.GetClipById(id: savedClipId);
                 

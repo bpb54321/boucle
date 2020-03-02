@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading.Tasks;
 using BoucleTranscription.Models;
 using BoucleTranscription.Repositories;
@@ -6,18 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoucleTranscription.Controllers
 {
-    public class ClipController : ControllerBase
+    [ApiController]
+    [Route("[controller]")]
+    public class ClipsController : ControllerBase
     {
         private readonly ClipRepository _clips;
 
-        public ClipController(BoucleDataContext context)
+        public ClipsController(BoucleDataContext context)
         {
             _clips = new ClipRepository(context);
         }
         
+        [HttpGet]
         public Task<Clip> GetClipById(int id)
         {
             return _clips.GetById(id);
+            
         }
+        
     }
 }
