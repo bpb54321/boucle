@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoucleTranscription", "BoucleTranscription\BoucleTranscription.csproj", "{38882562-F23F-42D8-95CB-D86444C8CB4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoucleTransriptionTests", "BoucleTransriptionTests\BoucleTransriptionTests.csproj", "{C8571CB7-58F0-4439-9741-359FB7707771}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8571CB7-58F0-4439-9741-359FB7707771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8571CB7-58F0-4439-9741-359FB7707771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8571CB7-58F0-4439-9741-359FB7707771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8571CB7-58F0-4439-9741-359FB7707771}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
