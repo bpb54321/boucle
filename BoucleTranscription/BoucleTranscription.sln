@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoucleTranscription", "BoucleTranscription\BoucleTranscription.csproj", "{38882562-F23F-42D8-95CB-D86444C8CB4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38882562-F23F-42D8-95CB-D86444C8CB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
