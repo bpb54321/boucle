@@ -29,7 +29,7 @@ namespace BoucleTranscription
         {
             services.AddControllers();
 
-            services.AddDbContext<BoucleDataContext>(opt => opt.UseNpgsql("Host=127.0.0.1;Port=5432;Username=postgres;Password=admin;"));
+            services.AddDbContext<BoucleDataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

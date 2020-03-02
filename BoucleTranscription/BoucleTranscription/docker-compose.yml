@@ -4,6 +4,8 @@ services:
   database:
     image: postgres
     container_name: boucle-db
+    ports:
+      - "6432:5432"
     environment:
       - DEBUG=false
       - POSTGRES_PASSWORD=admin
