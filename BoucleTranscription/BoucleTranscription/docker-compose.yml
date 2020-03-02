@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  database:
+    image: postgres
+    container_name: boucle-db
+    environment:
+      - DEBUG=false
+      - POSTGRES_PASSWORD=admin
