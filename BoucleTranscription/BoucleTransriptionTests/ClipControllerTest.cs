@@ -1,5 +1,3 @@
-using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using BoucleTranscription.Controllers;
 using BoucleTranscription.Models;
@@ -10,21 +8,25 @@ using Xunit;
 
 namespace BoucleTransriptionTests
 {
-    public class UnitTest1
+    public class ClipControllerTest
     {
         [Fact]
         public async Task get_clip_by_id_gets_the_correct_clip()
         {
             int savedClipId;
+            const int clipStartTime = 0;
+            const int clipEndTime = 5;
+            const string clipTranscription = "transcribed test";
+            
             var options = new DbContextOptionsBuilder<BoucleDataContext>()
                 .UseInMemoryDatabase(databaseName: "get_clip_by_id_gets_the_correct_clip").Options;
 
             await using (var context = new BoucleDataContext(options))
             {
                 var clip = new Clip {
-                    StartTime = 0,
-                    EndTime = 5,
-                    Transcription = "transcribed text"
+                    StartTime = clipStartTime,
+                    EndTime = clipEndTime,
+                    Transcription = clipTranscription
                 };
                 context.Clips.Add(clip);
                 context.SaveChanges();
@@ -38,6 +40,9 @@ namespace BoucleTransriptionTests
                 var gotClip = await clipController.GetClipById(id: savedClipId);
                 
                 gotClip.Id.Should().Be(savedClipId);
+                gotClip.StartTime.Should().Be(clipStartTime);
+                gotClip.EndTime.Should().Be(clipEndTime);
+                gotClip.Transcription.Should().Be(clipTranscription);
             }
         }
     }
