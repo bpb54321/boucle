@@ -21,23 +21,10 @@ namespace BoucleTranscription.Controllers
         }
         
         [HttpGet]
-        public IEnumerable<Clip> Get()
+        public async Task<ActionResult<Clip>> GetById(int id)
         {
-            // return _clips.GetById(id);
-            return new List<Clip> {
-                new Clip {
-                    Id = 1,
-                    StartTime = 0,
-                    EndTime = 5,
-                    Transcription = "0 - 5"
-                }, 
-                new Clip {
-                    Id = 2,
-                    StartTime = 5,
-                    EndTime = 10,
-                    Transcription = "0 - 5"
-                }
-            };
+            var match = await _clips.GetById(id);
+            return match;
 
         }
         

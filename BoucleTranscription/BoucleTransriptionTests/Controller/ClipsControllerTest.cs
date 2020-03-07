@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BoucleTranscription.Controllers;
 using BoucleTranscription.Models;
@@ -5,8 +6,9 @@ using BoucleTranscription.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BoucleTransriptionTests
+namespace BoucleTransriptionTests.Controller
 {
     public class ClipsControllerTest
     {
@@ -37,12 +39,12 @@ namespace BoucleTransriptionTests
             {
                 var clipController = new ClipsController(context);
 
-                var gotClip = await clipController.GetClipById(id: savedClipId);
-                
-                gotClip.Id.Should().Be(savedClipId);
-                gotClip.StartTime.Should().Be(clipStartTime);
-                gotClip.EndTime.Should().Be(clipEndTime);
-                gotClip.Transcription.Should().Be(clipTranscription);
+                ActionResult<Clip> gotClipActionResult = await clipController.GetById(id: savedClipId);
+
+                gotClipActionResult.Value.Id.Should().Be(savedClipId);
+                gotClipActionResult.Value.StartTime.Should().Be(clipStartTime);
+                gotClipActionResult.Value.EndTime.Should().Be(clipEndTime);
+                gotClipActionResult.Value.Transcription.Should().Be(clipTranscription);
             }
         }
     }
