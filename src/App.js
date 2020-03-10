@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import "./App.css";
+import { ClipView } from "./components/ClipView/ClipView";
 
 function App() {
   const [startTime, setStartTime] = useState(0);
@@ -90,10 +91,7 @@ function App() {
             Stop
           </button>
           <div>
-            <textarea
-              className="App__textarea"
-              data-testid="transcription-area"
-            ></textarea>
+            <ClipView />
           </div>
         </form>
       </main>

@@ -11,7 +11,8 @@ export function ClipView() {
     })();
   });
   return (
-    <input
+    <textarea
+      className={"App__textarea"}
       data-testid="transcription-input"
       type="textarea"
       onChange={() => {
