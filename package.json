@@ -37,6 +37,7 @@
   "devDependencies": {
     "@jackfranklin/test-data-bot": "^1.0.0",
     "eslint-plugin-cypress": "^2.10.3",
-    "eslint-plugin-react-hooks": "^2.3.0"
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "prettier": "^1.19.1"
   }
 }
