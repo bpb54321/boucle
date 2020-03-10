@@ -123,4 +123,35 @@ describe("App", () => {
   it('when the user presses start after pressing stop, the loop plays again', function () {
     
   });
+
+  /*
+   MVP User Journey
+   
+   The user opens the app, and a default audio file is loaded. 
+   
+   The audio file has 0 clips.
+   
+   The user presses the New Clip button.
+   
+   A form appears with fields for clip start time, end time, and transcription.
+   
+   The user presses Loop, which starts the audio looping between the clip start and end time, with a pause in-between.
+   
+   The user adjusts the start and end time to correspond to a short phrase or utterance in the clip.  The loop adjusts its start and end time according to the clip start and end time.
+   
+   Once the user is happy with the start and end time, the user writes the transcription in the transcription field, editing the text as needed.
+   
+   Once the transcription is finished, the user presses the New Clip button again. 
+   
+   The user is now shown a new form where start time is equal to the end time of the previous clip, the end time of this clip equals the new start time plus three seconds, and the transcription field is empty.
+   
+   The user adjusts the fields of this clip as needed.
+   
+   The user navigates back to the previous clip to adjust the transcription.
+   
+   The user quits and re-opens the app, and the data is still there. The clip with the 
+   lowest start time is displayed first.
+   
+   
+   */
 });
