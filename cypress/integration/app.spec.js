@@ -115,4 +115,12 @@ describe("App", () => {
       }
     );
   });
+
+  it('when the user presses stop, the loop stops playing', function () {
+    
+  });
+
+  it('when the user presses start after pressing stop, the loop plays again', function () {
+    
+  });
 });
