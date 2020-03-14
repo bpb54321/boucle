@@ -8,6 +8,7 @@ function App() {
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
   const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);
+  const [isClipEditFormShown, setIsClipEditFormShown] = useState(false);
 
   const audioPlayerRef = useRef();
   const handleStartLoop = useCallback(() => {
@@ -59,41 +60,47 @@ function App() {
           Your browser does not support the
           <code>audio</code> element.
         </audio>
-        <form
-          onSubmit={event => {
-            event.preventDefault();
-          }}
-        >
-          <label htmlFor="loop-start-time">Loop Start Time</label>
-          <input
-            id="loop-start-time"
-            type="number"
-            value={startTime}
-            onChange={event => {
-              onValueChange(event, setStartTime);
+        <div>
+          <button data-testid={"new-clip-button"}>New Clip</button>
+        </div>
+        {isClipEditFormShown ? (
+          <form
+            data-testid={"clip-edit-form"}
+            onSubmit={event => {
+              event.preventDefault();
             }}
-            data-testid="loop-start-time"
-          />
-          <label htmlFor="loop-end-time">Loop End Time</label>
-          <input
-            id="loop-end-time"
-            type="number"
-            value={endTime}
-            onChange={event => {
-              onValueChange(event, setEndTime);
-            }}
-            data-testid="loop-end-time"
-          />
-          <button onClick={handleStartLoop} data-testid="start-loop-button">
-            Start
-          </button>
-          <button onClick={handleStopLoop} data-testid="stop-loop-button">
-            Stop
-          </button>
-          <div>
-            <ClipView />
-          </div>
-        </form>
+          >
+            <label htmlFor="loop-start-time">Loop Start Time</label>
+            <input
+              id="loop-start-time"
+              type="number"
+              value={startTime}
+              onChange={event => {
+                onValueChange(event, setStartTime);
+              }}
+              data-testid="loop-start-time"
+            />
+            <label htmlFor="loop-end-time">Loop End Time</label>
+            <input
+              id="loop-end-time"
+              type="number"
+              value={endTime}
+              onChange={event => {
+                onValueChange(event, setEndTime);
+              }}
+              data-testid="loop-end-time"
+            />
+            <button onClick={handleStartLoop} data-testid="start-loop-button">
+              Start
+            </button>
+            <button onClick={handleStopLoop} data-testid="stop-loop-button">
+              Stop
+            </button>
+            <div>
+              <ClipView />
+            </div>
+          </form>
+        ) : null}
       </main>
     </div>
   );
