@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import "./App.css";
-import { ClipView } from "./components/ClipView/ClipView";
+import { ClipView } from "components/ClipView/ClipView";
 
 function App() {
   const [startTime, setStartTime] = useState(0);
