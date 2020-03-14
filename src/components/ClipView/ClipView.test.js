@@ -1,3 +1,4 @@
+import { wait } from "@testing-library/dom";
 import { ClipView } from "components/ClipView/ClipView";
 import { render } from "@testing-library/react";
 import React from "react";
@@ -23,5 +24,15 @@ describe("ClipView", () => {
 
     // Assert
     expect(transcriptionInput).toHaveValue(clip.transcription);
+  });
+
+  test("should not fetch clip data if no clip id is provided", async () => {
+    // Act
+    render(<ClipView />);
+
+    // Assert
+    await wait(() => {
+      expect(axios.get).not.toHaveBeenCalled();
+    });
   });
 });
