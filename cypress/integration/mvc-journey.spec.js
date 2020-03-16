@@ -16,15 +16,54 @@ describe("Mvp user journey", () => {
     });
 
     // Clip start time defaults to 0, and end time defaults to 5 seconds in
-    cy.findByTestId("loop-start-time").should("have.value", "0");
-    cy.findByTestId("loop-end-time").should("have.value", "5");
+    const startTimeInputValue = 0;
+    const endTimeInputValue = 5;
+    cy.findByTestId("loop-start-time").should(
+      "have.value",
+      startTimeInputValue.toString()
+    );
+    cy.findByTestId("loop-end-time").should(
+      "have.value",
+      endTimeInputValue.toString()
+    );
 
+    // The user presses Loop, which starts the audio looping between the clip start and end time, with a pause in-between.
+    const timeTolerance = 0.25;
+    cy.findByTestId("start-loop-button").click();
+    cy.findByTestId("audio-player").should($audioEl => {
+      const audioEl = $audioEl.get(0);
+      expect(audioEl.currentTime).to.be.closeTo(
+        startTimeInputValue,
+        timeTolerance,
+        "expect audio player to be set to start time"
+      );
+      expect(audioEl.paused).to.equal(
+        false,
+        "expect audio player to not be paused"
+      );
+    });
+    cy.findByTestId("audio-player", { timeout: 10000 }).should($audioEl => {
+      const audioEl = $audioEl.get(0);
+      expect(audioEl.currentTime).to.be.closeTo(
+        endTimeInputValue,
+        timeTolerance,
+        "expect audio player to be at end time"
+      );
+      expect(audioEl.paused).to.equal(true, "expect audio player to be paused");
+    });
+    cy.findByTestId("audio-player", { timeout: 10000 }).should($audioEl => {
+      const audioEl = $audioEl.get(0);
+      expect(audioEl.currentTime).to.be.closeTo(
+        startTimeInputValue,
+        timeTolerance,
+        "expect audio player to be reset to start time"
+      );
+      expect(audioEl.paused).to.equal(
+        false,
+        "expect audio player to not be paused"
+      );
+    });
     /*
-   
-   
-   
-   The user presses Loop, which starts the audio looping between the clip start and end time, with a pause in-between.
-   
    The user adjusts the start and end time to correspond to a short phrase or utterance in the clip.  The loop adjusts its start and end time according to the clip start and end time.
    
    Once the user is happy with the start and end time, the user writes the transcription in the transcription field, editing the text as needed.
@@ -39,8 +78,6 @@ describe("Mvp user journey", () => {
    
    The user quits and re-opens the app, and the data is still there. The clip with the 
    lowest start time is displayed first.
-   
-   
    */
   });
 });
