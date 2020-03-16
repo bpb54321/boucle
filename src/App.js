@@ -1,10 +1,11 @@
+import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import "./App.css";
-import { ClipView } from "components/ClipView/ClipView";
+import { useSelector } from "react-redux";
 
 function App() {
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
+  const clip = useSelector(state => state.clip);
+  const { startTime, endTime } = clip;
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
   const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);
@@ -20,10 +21,6 @@ function App() {
     audioPlayerRef.current.pause();
     setIsStopped(true);
   }
-
-  const onValueChange = (event, setterFunction) => {
-    setterFunction(parseInt(event.target.value));
-  };
 
   useEffect(() => {
     if (!isStopped && finishedBreak) {
@@ -63,44 +60,15 @@ function App() {
         <div>
           <button data-testid={"new-clip-button"}>New Clip</button>
         </div>
-        {isClipEditFormShown ? (
-          <form
-            data-testid={"clip-edit-form"}
-            onSubmit={event => {
-              event.preventDefault();
-            }}
-          >
-            <label htmlFor="loop-start-time">Loop Start Time</label>
-            <input
-              id="loop-start-time"
-              type="number"
-              value={startTime}
-              onChange={event => {
-                onValueChange(event, setStartTime);
-              }}
-              data-testid="loop-start-time"
-            />
-            <label htmlFor="loop-end-time">Loop End Time</label>
-            <input
-              id="loop-end-time"
-              type="number"
-              value={endTime}
-              onChange={event => {
-                onValueChange(event, setEndTime);
-              }}
-              data-testid="loop-end-time"
-            />
-            <button onClick={handleStartLoop} data-testid="start-loop-button">
-              Start
-            </button>
-            <button onClick={handleStopLoop} data-testid="stop-loop-button">
-              Stop
-            </button>
-            <div>
-              <ClipView />
-            </div>
-          </form>
-        ) : null}
+        <div>
+          <button onClick={handleStartLoop} data-testid="start-loop-button">
+            Start
+          </button>
+          <button onClick={handleStopLoop} data-testid="stop-loop-button">
+            Stop
+          </button>
+        </div>
+        {isClipEditFormShown ? <ClipEditForm /> : null}
       </main>
     </div>
   );
