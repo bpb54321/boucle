@@ -58,7 +58,12 @@ function App() {
           <code>audio</code> element.
         </audio>
         <div>
-          <button data-testid={"new-clip-button"}>New Clip</button>
+          <button
+            data-testid={"new-clip-button"}
+            onClick={() => setIsClipEditFormShown(true)}
+          >
+            New Clip
+          </button>
         </div>
         <div>
           <button onClick={handleStartLoop} data-testid="start-loop-button">

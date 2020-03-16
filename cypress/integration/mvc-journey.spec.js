@@ -11,7 +11,7 @@ describe('Mvp user journey', () => {
 
     // A form appears with fields for clip start time, end time, and transcription.
     cy.findByTestId('clip-edit-form').should(($clipEditForm) => {
-      expect($clipEditForm, 'Expect clip edit form to be visible').to.be.visible();
+      return expect($clipEditForm, 'Expect clip edit form to be visible').to.be.visible;
     });
     /*
    
