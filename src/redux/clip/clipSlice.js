@@ -4,7 +4,7 @@ const clipSlice = createSlice({
   name: "clip",
   initialState: {
     startTime: 0,
-    endTime: 0,
+    endTime: 5,
     transcription: ""
   },
   reducers: {

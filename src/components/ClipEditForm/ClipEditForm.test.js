@@ -1,4 +1,4 @@
-import { wait } from "@testing-library/dom";
+import { waitFor } from "@testing-library/dom";
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import React from "react";
 import { build, fake } from "@jackfranklin/test-data-bot";
@@ -34,7 +34,7 @@ describe("ClipEditForm", () => {
     const endTimeInput = await findByTestId("loop-end-time");
 
     // Assert
-    await wait(() => {
+    await waitFor(() => {
       expect(transcriptionInput).toHaveValue(clip.transcription);
     });
     expect(startTimeInput).toHaveValue(clip.startTime);
@@ -47,5 +47,19 @@ describe("ClipEditForm", () => {
 
     // Assert
     expect(axios.get).not.toHaveBeenCalled();
+  });
+
+  test("should display correct default start time and endtime values", async () => {
+    // Arrange
+    // Act
+    const { getByTestId } = renderWithRedux(<ClipEditForm />);
+    const startTimeInput = getByTestId("loop-start-time");
+    const endTimeInput = getByTestId("loop-end-time");
+
+    // Assert
+    const defaultClipStartTime = 0;
+    const defaultClipEndTime = 5;
+    expect(startTimeInput).toHaveValue(defaultClipStartTime);
+    expect(endTimeInput).toHaveValue(defaultClipEndTime);
   });
 });

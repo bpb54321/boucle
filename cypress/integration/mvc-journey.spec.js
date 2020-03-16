@@ -1,18 +1,24 @@
-describe('Mvp user journey', () => {
-  it('should allow a user to create new clips', function () {
+describe("Mvp user journey", () => {
+  it("should allow a user to create new clips", function() {
     // The user opens the app
-    cy.visit('/');
-    
+    cy.visit("/");
+
     // No clip editing forms are currently visible
-    cy.findByTestId('clip-edit-form').should('not.be.visible');
-    
+    cy.findByTestId("clip-edit-form").should("not.be.visible");
+
     // The user presses the New Clip button
-    cy.findByTestId('new-clip-button').click();
+    cy.findByTestId("new-clip-button").click();
 
     // A form appears with fields for clip start time, end time, and transcription.
-    cy.findByTestId('clip-edit-form').should(($clipEditForm) => {
-      return expect($clipEditForm, 'Expect clip edit form to be visible').to.be.visible;
+    cy.findByTestId("clip-edit-form").should($clipEditForm => {
+      return expect($clipEditForm, "Expect clip edit form to be visible").to.be
+        .visible;
     });
+
+    // Clip start time defaults to 0, and end time defaults to 5 seconds in
+    cy.findByTestId("loop-start-time").should("have.value", "0");
+    cy.findByTestId("loop-end-time").should("have.value", "5");
+
     /*
    
    
