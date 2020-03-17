@@ -31,7 +31,7 @@ export const ClipEditForm = function({ id, ...props }) {
         value={localClipState.startTime}
         onChange={event => {
           if (event.target.value) {
-            dispatch(clipChanged({ startTime: event.target.value }));
+            dispatch(clipChanged({ startTime: parseInt(event.target.value) }));
           }
           setLocalClipState({
             ...localClipState,
@@ -47,7 +47,7 @@ export const ClipEditForm = function({ id, ...props }) {
         value={localClipState.endTime}
         onChange={event => {
           if (event.target.value) {
-            dispatch(clipChanged({ endTime: event.target.value }));
+            dispatch(clipChanged({ endTime: parseInt(event.target.value) }));
           }
           setLocalClipState({
             ...localClipState,
