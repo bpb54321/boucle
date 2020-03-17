@@ -63,8 +63,52 @@ describe("Mvp user journey", () => {
         "expect audio player to not be paused"
       );
     });
+
+    // The user adjusts the start and end time to correspond to a short phrase or utterance in the clip.
+    const newStartTimeInputValue = 1;
+    const newEndTimeInputValue = 4;
+    cy.findByTestId("loop-start-time").type(
+      `{selectAll}{backspace}${newStartTimeInputValue}`
+    );
+    cy.findByTestId("loop-end-time").type(
+      `{selectAll}{backspace}${newEndTimeInputValue}`
+    );
+
+    // The loop adjusts its start and end time according to the clip start and end time.
+    cy.findByTestId("audio-player", { timeout: 10000 }).should($audioEl => {
+      const audioEl = $audioEl.get(0);
+      expect(audioEl.currentTime).to.be.closeTo(
+        newStartTimeInputValue,
+        timeTolerance,
+        "expect audio player to be set to start time"
+      );
+      expect(audioEl.paused).to.equal(
+        false,
+        "expect audio player to not be paused"
+      );
+    });
+    cy.findByTestId("audio-player", { timeout: 10000 }).should($audioEl => {
+      const audioEl = $audioEl.get(0);
+      expect(audioEl.currentTime).to.be.closeTo(
+        newEndTimeInputValue,
+        timeTolerance,
+        "expect audio player to be at end time"
+      );
+      expect(audioEl.paused).to.equal(true, "expect audio player to be paused");
+    });
+    cy.findByTestId("audio-player", { timeout: 10000 }).should($audioEl => {
+      const audioEl = $audioEl.get(0);
+      expect(audioEl.currentTime).to.be.closeTo(
+        newStartTimeInputValue,
+        timeTolerance,
+        "expect audio player to be reset to start time"
+      );
+      expect(audioEl.paused).to.equal(
+        false,
+        "expect audio player to not be paused"
+      );
+    });
     /*
-   The user adjusts the start and end time to correspond to a short phrase or utterance in the clip.  The loop adjusts its start and end time according to the clip start and end time.
    
    Once the user is happy with the start and end time, the user writes the transcription in the transcription field, editing the text as needed.
    

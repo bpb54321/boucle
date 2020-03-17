@@ -4,6 +4,7 @@ import React from "react";
 import { build, fake } from "@jackfranklin/test-data-bot";
 import axios from "axios";
 import { renderWithRedux } from "renderWithRedux";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 
@@ -23,7 +24,7 @@ beforeEach(() => {
 });
 
 describe("ClipEditForm", () => {
-  test("should display clip properties from the API", async () => {
+  test("should display clip properties from the API if a clip id is provided", async () => {
     // Arrange
     axios.get.mockResolvedValue({ data: clip });
 
@@ -61,5 +62,43 @@ describe("ClipEditForm", () => {
     const defaultClipEndTime = 5;
     expect(startTimeInput).toHaveValue(defaultClipStartTime);
     expect(endTimeInput).toHaveValue(defaultClipEndTime);
+  });
+
+  test("should not update redux state if start time or end time are empty", async () => {
+    // Act
+    const { getByTestId, store } = renderWithRedux(<ClipEditForm />);
+    const intialState = store.getState();
+
+    const startTimeInput = getByTestId("loop-start-time");
+    const endTimeInput = getByTestId("loop-end-time");
+
+    await userEvent.type(startTimeInput, "", {
+      allAtOnce: true
+    });
+    await userEvent.type(endTimeInput, "", {
+      allAtOnce: true
+    });
+
+    // Assert
+    expect(store.getState()).toStrictEqual(intialState);
+  });
+
+  test("should update input values for start Time and end time even if user enters empty string", async () => {
+    // Act
+    const { getByTestId, store } = renderWithRedux(<ClipEditForm />);
+
+    const startTimeInput = getByTestId("loop-start-time");
+    const endTimeInput = getByTestId("loop-end-time");
+
+    await userEvent.type(startTimeInput, "", {
+      allAtOnce: true
+    });
+    await userEvent.type(endTimeInput, "", {
+      allAtOnce: true
+    });
+
+    // Assert
+    expect(startTimeInput).toHaveValue(null);
+    expect(endTimeInput).toHaveValue(null);
   });
 });
