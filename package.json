@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@jackfranklin/test-data-bot": "^1.0.0",
+    "@sheerun/mutationobserver-shim": "^0.3.3",
     "cypress": "^4.1.0",
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-react-hooks": "^2.3.0",

@@ -124,7 +124,7 @@ describe("Mvp user journey", () => {
       expect(
         $startTimeInput,
         "expect loop start time to have a value equal to the previous clip end time"
-      ).to.have.value(secondClipDefaultStartTime);
+      ).to.have.value(secondClipDefaultStartTime.toString());
     });
     const defaultNewClipLength = 3;
     const secondClipDefaultEndTime =
@@ -132,17 +132,17 @@ describe("Mvp user journey", () => {
     cy.findByTestId("loop-end-time").should($startTimeInput => {
       expect(
         $startTimeInput,
-        "expect loop end time to have a value equal to start time + 3 sec"
-      ).to.have.value(newEndTimeInputValue);
+        "expect loop end time to have a value equal to start time + default clip duration"
+      ).to.have.value(secondClipDefaultEndTime.toString());
+    });
+    cy.findByTestId("transcription-input").should($transcriptionInput => {
+      expect(
+        $transcriptionInput,
+        "expect the transcription for the new clip to be empty"
+      ).to.have.value("");
     });
 
     /*
-
-   
-   
-   
-   
-   
    The user adjusts the fields of this clip as needed.
    
    The user navigates back to the previous clip to adjust the transcription.

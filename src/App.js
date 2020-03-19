@@ -1,8 +1,10 @@
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import "./App.css";
+import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
+import { clipDefaultDuration } from "constants.js";
+import { clipAdded } from "redux/clips/clipsSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -49,9 +51,18 @@ function App() {
 
   const handleAddClip = () => {
     setIsClipEditFormShown(true);
+    if (clips.length > 0) {
+      dispatch(
+        clipChanged({
+          startTime: clip.endTime,
+          endTime: clip.endTime + clipDefaultDuration,
+          transcription: ""
+        })
+      );
+    }
     dispatch(
-      clipChanged({
-        startTime: clip.endTime
+      clipAdded({
+        id: "placeholder"
       })
     );
   };

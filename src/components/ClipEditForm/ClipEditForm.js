@@ -17,6 +17,10 @@ export const ClipEditForm = function({ id, ...props }) {
     }
   }, [id]);
 
+  useEffect(() => {
+    setLocalClipState(clip);
+  }, [clip]);
+
   return (
     <form
       data-testid={"clip-edit-form"}
