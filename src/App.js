@@ -1,10 +1,13 @@
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import "./App.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { clipChanged } from "redux/clip/clipSlice";
 
 function App() {
+  const dispatch = useDispatch();
   const clip = useSelector(state => state.clip);
+  const clips = useSelector(state => state.clips);
   const { startTime, endTime } = clip;
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
@@ -44,6 +47,15 @@ function App() {
     }
   };
 
+  const handleAddClip = () => {
+    setIsClipEditFormShown(true);
+    dispatch(
+      clipChanged({
+        startTime: clip.endTime
+      })
+    );
+  };
+
   return (
     <div className="App">
       <main>
@@ -58,10 +70,7 @@ function App() {
           <code>audio</code> element.
         </audio>
         <div>
-          <button
-            data-testid={"new-clip-button"}
-            onClick={() => setIsClipEditFormShown(true)}
-          >
+          <button data-testid={"new-clip-button"} onClick={handleAddClip}>
             New Clip
           </button>
         </div>

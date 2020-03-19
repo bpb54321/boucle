@@ -108,13 +108,40 @@ describe("Mvp user journey", () => {
         "expect audio player to not be paused"
       );
     });
+
+    // Once the user is happy with the start and end time, the user writes the transcription in the transcription field, editing the text as needed.
+    const transcription = "This is my transcription.";
+    cy.findByTestId("transcription-input").type(transcription);
+
+    // Once the transcription is finished, the user presses the Add Clip button again.
+    cy.findByTestId("new-clip-button").click();
+
+    // The user is now shown a new form where start time is equal to the end time of
+    // the previous clip, the end time of this clip equals the new start time plus
+    // three seconds, and the transcription field is empty.
+    const secondClipDefaultStartTime = newEndTimeInputValue;
+    cy.findByTestId("loop-start-time").should($startTimeInput => {
+      expect(
+        $startTimeInput,
+        "expect loop start time to have a value equal to the previous clip end time"
+      ).to.have.value(secondClipDefaultStartTime);
+    });
+    const defaultNewClipLength = 3;
+    const secondClipDefaultEndTime =
+      secondClipDefaultStartTime + defaultNewClipLength;
+    cy.findByTestId("loop-end-time").should($startTimeInput => {
+      expect(
+        $startTimeInput,
+        "expect loop end time to have a value equal to start time + 3 sec"
+      ).to.have.value(newEndTimeInputValue);
+    });
+
     /*
+
    
-   Once the user is happy with the start and end time, the user writes the transcription in the transcription field, editing the text as needed.
    
-   Once the transcription is finished, the user presses the New Clip button again. 
    
-   The user is now shown a new form where start time is equal to the end time of the previous clip, the end time of this clip equals the new start time plus three seconds, and the transcription field is empty.
+   
    
    The user adjusts the fields of this clip as needed.
    
