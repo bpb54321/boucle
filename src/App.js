@@ -4,12 +4,13 @@ import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
 import { clipDefaultDuration } from "constants.js";
-import { clipAdded } from "redux/clips/clipsSlice";
+import { clipAdded, clipIdsFetched } from "redux/clips/clipsSlice";
+import clipService from "redux/clip/clipService";
 
 function App() {
   const dispatch = useDispatch();
   const clip = useSelector(state => state.clip);
-  const clips = useSelector(state => state.clips);
+  const clipIds = useSelector(state => state.clips.clipIds);
   const { startTime, endTime } = clip;
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
@@ -37,6 +38,15 @@ function App() {
     const loopDuration = endTime - startTime;
     setPauseTimeBetweenLoops(loopDuration);
   }, [startTime, endTime]);
+
+  useEffect(() => {
+    const fetchClipIds = async () => {
+      const clipIds = await clipService.getClipIds();
+      dispatch(clipIdsFetched(clipIds));
+    };
+
+    fetchClipIds();
+  });
 
   const onTimeUpdate = event => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
@@ -93,7 +103,7 @@ function App() {
             Stop
           </button>
         </div>
-        {isClipEditFormShown ? <ClipEditForm /> : null}
+        {clipIds.length > 0 ? <ClipEditForm id={clipIds[0]} /> : null}
       </main>
     </div>
   );

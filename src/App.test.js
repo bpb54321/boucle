@@ -2,7 +2,12 @@ import React from "react";
 import App from "App.js";
 import { renderWithRedux } from "renderWithRedux";
 import userEvent from "@testing-library/user-event";
-import { waitFor } from "@testing-library/dom";
+import { waitFor, wait } from "@testing-library/dom";
+import { render } from "@testing-library/react";
+import { fakeClipIdsBuilder, fakeClipBuilder } from "redux/clip/fakeBuilders";
+import clipService from "redux/clip/clipService";
+
+jest.mock("redux/clip/clipService");
 
 describe("App", () => {
   test("should not display a clip edit form by default", async () => {
@@ -11,6 +16,33 @@ describe("App", () => {
 
     // Assert
     expect(queryByTestId("clip-edit-form")).not.toBeInTheDocument();
+  });
+
+  test("should display the first clip of the media document when the app is loaded if there is at least one clip", async () => {
+    // Arrange
+    const numberClipIds = 1;
+    const clipIds = fakeClipIdsBuilder(numberClipIds);
+    const clip = fakeClipBuilder({
+      overrides: {
+        id: clipIds[0]
+      }
+    });
+
+    clipService.getClipIds.mockResolvedValue(clipIds);
+    clipService.getClipById.mockResolvedValue(clip);
+
+    // Act
+    const { findByTestId } = renderWithRedux(<App />);
+    const clipStartTimeInput = await findByTestId("loop-start-time");
+    const clipEndTimeInput = await findByTestId("loop-end-time");
+    const clipTranscriptionInput = await findByTestId("transcription-input");
+
+    // Assert
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clip.startValue)
+    );
+    expect(clipEndTimeInput).toHaveValue(clip.endValue);
+    expect(clipTranscriptionInput).toHaveValue(clip.transcription);
   });
 
   test("should display an edit form for a new clip when user clicks the New Clip button ", async () => {

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { clipChanged } from "redux/clip/clipSlice";
+import clipService from "redux/clip/clipService";
 
 export const ClipEditForm = function({ id, ...props }) {
   const dispatch = useDispatch();
@@ -11,8 +12,8 @@ export const ClipEditForm = function({ id, ...props }) {
   useEffect(() => {
     if (id) {
       (async () => {
-        const response = await axios.get(`clips/${id}`);
-        setLocalClipState(response.data);
+        const clip = await clipService.getClipById(id);
+        setLocalClipState(clip);
       })();
     }
   }, [id]);
