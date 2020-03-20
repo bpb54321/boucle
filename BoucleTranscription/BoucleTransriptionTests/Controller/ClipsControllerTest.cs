@@ -47,5 +47,35 @@ namespace BoucleTransriptionTests.Controller
                 gotClipActionResult.Value.Transcription.Should().Be(clipTranscription);
             }
         }
+        
+        [Fact]
+        public async Task create_clip_creates_a_clip()
+        {
+            // Arrange
+            const int clipStartTime = 0;
+            const int clipEndTime = 5;
+            const string clipTranscription = "";
+            var clipToCreate = new Clip
+            {
+                StartTime = clipStartTime,
+                EndTime = clipEndTime,
+                Transcription = clipTranscription
+            };
+            
+            var options = new DbContextOptionsBuilder<BoucleDataContext>()
+                .UseInMemoryDatabase(databaseName: "create_clip_creates_a_clip").Options;
+
+            await using (var context = new BoucleDataContext(options))
+            {
+                var clipController = new ClipsController(context);
+
+                ActionResult<Clip> createdClipActionResult = await clipController.Create(clipToCreate);
+
+                createdClipActionResult.Value.Id.Should().BePositive();
+                createdClipActionResult.Value.StartTime.Should().Be(clipStartTime);
+                createdClipActionResult.Value.EndTime.Should().Be(clipEndTime);
+                createdClipActionResult.Value.Transcription.Should().Be(clipTranscription);
+            }
+        }
     }
 }

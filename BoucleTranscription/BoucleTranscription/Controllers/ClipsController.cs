@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -26,6 +27,12 @@ namespace BoucleTranscription.Controllers
             var match = await _clips.GetById(id);
             return match;
 
+        }
+
+        public async Task<ActionResult<Clip>> Create(Clip clip)
+        {
+            clip.Id = 1;
+            return clip;
         }
         
     }
