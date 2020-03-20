@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using BoucleTranscription.Models;
 using BoucleTranscription.Repositories;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Mvc;
-using BoucleTranscription.Models;
 
 namespace BoucleTranscription.Controllers
 {
@@ -29,9 +24,10 @@ namespace BoucleTranscription.Controllers
 
         }
 
+        [HttpPost]
         public async Task<ActionResult<Clip>> Create(Clip clip)
         {
-            clip.Id = 1;
+            await _clips.Create(clip);
             return clip;
         }
         

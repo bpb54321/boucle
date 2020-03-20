@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BoucleTranscription.Models;
 
@@ -11,9 +12,17 @@ namespace BoucleTranscription.Repositories
             _context = context;
         }
         
-        public Task<Clip> GetById(int id)
+        public async Task<Clip> GetById(int id)
         {
-            return _context.FindAsync<Clip>(id).AsTask();
+            return await _context.FindAsync<Clip>(id);
         }
+
+        public async Task<Clip> Create(Clip clip)
+        {
+            _context.Set<Clip>().Add(clip);
+            await _context.SaveChangesAsync();
+            return clip;
+        }
+        
     }
 }

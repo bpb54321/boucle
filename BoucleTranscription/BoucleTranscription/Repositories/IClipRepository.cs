@@ -8,5 +8,6 @@ namespace BoucleTranscription.Repositories
     public interface IClipRepository
     {
         Task<Clip> GetById(int id);
+        Task<Clip> Create(Clip clip);
     }
 }
