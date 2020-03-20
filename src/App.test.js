@@ -10,12 +10,25 @@ import clipService from "redux/clip/clipService";
 jest.mock("redux/clip/clipService");
 
 describe("App", () => {
-  test("should not display a clip edit form by default", async () => {
+  test("should not display a clip edit form if no clips have yet been created for the media document", async () => {
+    // Arrange
+    const emptyClipIds = [];
+    clipService.getClipIds.mockResolvedValue(emptyClipIds);
+
     // Act
-    const { queryByTestId } = renderWithRedux(<App />);
+    const { queryByTestId, getByTestId } = renderWithRedux(<App />);
+
+    // Wait for the app to finish rerendering
+    await waitFor(() => {
+      expect(getByTestId("app")).toHaveAttribute(
+        "data-last-action",
+        "dispatch clip ids fetched"
+      );
+    });
 
     // Assert
-    expect(queryByTestId("clip-edit-form")).not.toBeInTheDocument();
+    const clipStartTimeInput = queryByTestId("loop-start-time");
+    expect(clipStartTimeInput).not.toBeInTheDocument();
   });
 
   test("should display the first clip of the media document when the app is loaded if there is at least one clip", async () => {

@@ -11,8 +11,10 @@ export const renderWithRedux = component => {
     middleware: [thunk]
   });
 
+  const renderResult = render(<Provider store={store}>{component}</Provider>);
+
   return {
-    ...render(<Provider store={store}>{component}</Provider>),
+    ...renderResult,
     store
   };
 };

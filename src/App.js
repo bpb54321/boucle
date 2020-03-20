@@ -7,7 +7,8 @@ import { clipDefaultDuration } from "constants.js";
 import { clipAdded, clipIdsFetched } from "redux/clips/clipsSlice";
 import clipService from "redux/clip/clipService";
 
-function App() {
+let lastAction = "";
+const App = () => {
   const dispatch = useDispatch();
   const clip = useSelector(state => state.clip);
   const clipIds = useSelector(state => state.clips.clipIds);
@@ -42,11 +43,12 @@ function App() {
   useEffect(() => {
     const fetchClipIds = async () => {
       const clipIds = await clipService.getClipIds();
+      lastAction = "dispatch clip ids fetched";
       dispatch(clipIdsFetched(clipIds));
     };
 
     fetchClipIds();
-  });
+  }, []);
 
   const onTimeUpdate = event => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
@@ -78,7 +80,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App" data-last-action={lastAction} data-testid={"app"}>
       <main>
         <audio
           ref={audioPlayerRef}
@@ -107,6 +109,6 @@ function App() {
       </main>
     </div>
   );
-}
+};
 
 export default App;
