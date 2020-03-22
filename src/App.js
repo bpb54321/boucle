@@ -4,10 +4,9 @@ import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
 import { clipDefaultDuration } from "constants.js";
-import { clipAdded, clipIdsFetched } from "redux/clips/clipsSlice";
+import { clipIdAdded, clipIdsFetched } from "redux/clips/clipsSlice";
 import clipService from "redux/clip/clipService";
 
-let lastAction = "";
 const App = () => {
   const dispatch = useDispatch();
   const clip = useSelector(state => state.clip);
@@ -16,7 +15,6 @@ const App = () => {
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
   const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);
-  const [isClipEditFormShown, setIsClipEditFormShown] = useState(false);
 
   const audioPlayerRef = useRef();
   const handleStartLoop = useCallback(() => {
@@ -41,16 +39,21 @@ const App = () => {
   }, [startTime, endTime]);
 
   useEffect(() => {
-    const fetchClipIds = async () => {
+    (async () => {
       const clipIds = await clipService.getClipIds();
-      lastAction = "dispatch clip ids fetched";
+      if (process.env.NODE_ENV === "test") {
+        window.lastAction = "clip ids fetched";
+      }
       dispatch(clipIdsFetched(clipIds));
-    };
 
-    fetchClipIds();
+      if (clipIds.length > 0) {
+        const clip = await clipService.getClipById(clipIds[0]);
+        dispatch(clipChanged(clip));
+      }
+    })();
   }, []);
 
-  const onTimeUpdate = event => {
+  const onTimeUpdate = () => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
       audioPlayerRef.current.pause();
       setFinishedBreak(false);
@@ -62,8 +65,7 @@ const App = () => {
   };
 
   const handleAddClip = () => {
-    setIsClipEditFormShown(true);
-    if (clips.length > 0) {
+    if (clipIds.length > 0) {
       dispatch(
         clipChanged({
           startTime: clip.endTime,
@@ -72,21 +74,21 @@ const App = () => {
         })
       );
     }
-    dispatch(
-      clipAdded({
-        id: "placeholder"
-      })
-    );
+    dispatch(clipIdAdded(10));
   };
 
   return (
-    <div className="App" data-last-action={lastAction} data-testid={"app"}>
+    <div
+      className="App"
+      data-last-action={window.lastAction}
+      data-testid={"app"}
+    >
       <main>
         <audio
           ref={audioPlayerRef}
           data-testid={"audio-player"}
           controls
-          src="infoman-s20-e24.mp4"
+          src="../public/infoman-s20-e24.mp4"
           onTimeUpdate={onTimeUpdate}
         >
           Your browser does not support the
