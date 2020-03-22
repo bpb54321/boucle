@@ -107,7 +107,7 @@ const App = () => {
             Stop
           </button>
         </div>
-        {clipIds.length > 0 ? <ClipEditForm id={clipIds[0]} /> : null}
+        {clipIds.length > 0 ? <ClipEditForm /> : null}
       </main>
     </div>
   );

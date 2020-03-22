@@ -1,82 +1,128 @@
-import { waitFor } from "@testing-library/dom";
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import React from "react";
-import { build, fake } from "@jackfranklin/test-data-bot";
-import axios from "axios";
-import { renderWithRedux } from "renderWithRedux";
+import { useSelector, useDispatch } from "react-redux";
+import { fakeClipBuilder } from "redux/clip/fakeBuilders";
 import userEvent from "@testing-library/user-event";
+import { render } from "@testing-library/react";
+import { waitFor } from "@testing-library/dom";
+import { getClip } from "redux/clip/clipSelectors";
+import { clipChanged } from "redux/clip/clipSlice";
 
-jest.mock("axios");
-
-let clip;
-beforeEach(() => {
-  jest.resetAllMocks();
-  clip = clipBuilder();
+const dispatch = jest.fn();
+jest.mock("react-redux", () => {
+  return {
+    __esModule: true,
+    useSelector: jest.fn(),
+    useDispatch: jest.fn()
+  };
 });
 
-describe("ClipEditForm", () => {
-  test("should display clip properties from the API if a clip id is provided", async () => {
-    // Arrange
-    axios.get.mockResolvedValue({ data: clip });
+jest.mock("redux/clip/clipSelectors", () => {
+  return {
+    __esModule: true,
+    getClip: jest.fn()
+  };
+});
 
+jest.mock("redux/clip/clipSlice", () => {
+  return {
+    __esModule: true,
+    clipChanged: jest.fn()
+  };
+});
+
+let clip;
+const clipChangedReturnValue = Symbol("clip changed return value");
+
+describe("ClipEditForm", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    clip = fakeClipBuilder();
+    getClip.mockReturnValue(clip);
+    useSelector.mockImplementation(selector => selector());
+    useDispatch.mockReturnValue(dispatch);
+    clipChanged.mockReturnValue(clipChangedReturnValue);
+  });
+
+  test("should display clip properties of the clip passed to it", async () => {
     // Act
-    const { findByTestId } = renderWithRedux(<ClipEditForm id={clip.id} />);
-    const transcriptionInput = await findByTestId("transcription-input");
-    const startTimeInput = await findByTestId("loop-start-time");
-    const endTimeInput = await findByTestId("loop-end-time");
+    const { getByTestId } = render(<ClipEditForm />);
+    const transcriptionInput = getByTestId("transcription-input");
+    const startTimeInput = getByTestId("loop-start-time");
+    const endTimeInput = getByTestId("loop-end-time");
 
     // Assert
-    await waitFor(() => {
-      expect(transcriptionInput).toHaveValue(clip.transcription);
-    });
+    expect(transcriptionInput).toHaveValue(clip.transcription);
     expect(startTimeInput).toHaveValue(clip.startTime);
     expect(endTimeInput).toHaveValue(clip.endTime);
   });
 
-  test("should not fetch clip data if no clip id is provided", async () => {
+  test("should dispatch changed clip start time when user changes start time", async () => {
     // Act
-    renderWithRedux(<ClipEditForm />);
-
-    // Assert
-    expect(axios.get).not.toHaveBeenCalled();
-  });
-
-  test("should display correct default start time and endtime values", async () => {
-    // Arrange
-    // Act
-    const { getByTestId } = renderWithRedux(<ClipEditForm />);
-    const startTimeInput = getByTestId("loop-start-time");
-    const endTimeInput = getByTestId("loop-end-time");
-
-    // Assert
-    const defaultClipStartTime = 0;
-    const defaultClipEndTime = 5;
-    expect(startTimeInput).toHaveValue(defaultClipStartTime);
-    expect(endTimeInput).toHaveValue(defaultClipEndTime);
-  });
-
-  test("should not update redux state if start time or end time are empty", async () => {
-    // Act
-    const { getByTestId, store } = renderWithRedux(<ClipEditForm />);
-    const intialState = store.getState();
+    const { getByTestId } = render(<ClipEditForm />);
 
     const startTimeInput = getByTestId("loop-start-time");
-    const endTimeInput = getByTestId("loop-end-time");
 
-    await userEvent.type(startTimeInput, "", {
-      allAtOnce: true
-    });
-    await userEvent.type(endTimeInput, "", {
+    const newStartTime = clip.startTime + 1;
+
+    // Act
+    await userEvent.type(startTimeInput, newStartTime, {
       allAtOnce: true
     });
 
     // Assert
-    expect(store.getState()).toStrictEqual(intialState);
+    expect(clipChanged).toHaveBeenCalledWith({
+      ...clip,
+      startTime: newStartTime
+    });
+    expect(dispatch).toHaveBeenCalledWith(clipChangedReturnValue);
   });
 
-  test("should update input values for start Time and end time even if user enters empty string", async () => {
+  test("should dispatch changed clip end time when user changes end time", async () => {
     // Act
-    const { getByTestId, store } = renderWithRedux(<ClipEditForm />);
+    const { getByTestId } = render(<ClipEditForm />);
+
+    const endTimeInput = getByTestId("loop-end-time");
+
+    const newEndTime = clip.endTime + 1;
+
+    // Act
+    await userEvent.type(endTimeInput, newEndTime, {
+      allAtOnce: true
+    });
+
+    // Assert
+    expect(clipChanged).toHaveBeenCalledWith({
+      ...clip,
+      endTime: newEndTime
+    });
+    expect(dispatch).toHaveBeenCalledWith(clipChangedReturnValue);
+  });
+
+  test("should dispatch changed clip transcription when user changes transcription", async () => {
+    // Act
+    const { getByTestId } = render(<ClipEditForm />);
+
+    const transcriptionInput = getByTestId("transcription-input");
+
+    const newTranscription = clip.transcription + " blah";
+
+    // Act
+    await userEvent.type(transcriptionInput, newTranscription, {
+      allAtOnce: true
+    });
+
+    // Assert
+    expect(clipChanged).toHaveBeenCalledWith({
+      ...clip,
+      transcription: newTranscription
+    });
+    expect(dispatch).toHaveBeenCalledWith(clipChangedReturnValue);
+  });
+
+  test("should update local input values for start Time and end time even if user enters empty string", async () => {
+    // Act
+    const { getByTestId } = render(<ClipEditForm />);
 
     const startTimeInput = getByTestId("loop-start-time");
     const endTimeInput = getByTestId("loop-end-time");

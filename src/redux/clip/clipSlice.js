@@ -9,9 +9,7 @@ const clipSlice = createSlice({
   },
   reducers: {
     clipChanged: (state, action) => {
-      for (let [key, newValue] of Object.entries(action.payload)) {
-        state[key] = newValue;
-      }
+      return action.payload;
     }
   }
 });
