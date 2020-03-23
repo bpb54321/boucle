@@ -1,4 +1,12 @@
 export default {
-  getClipIds: async () => {},
-  getClipById: async () => {}
+  getClipIds: async () => {
+    return [];
+  },
+  getClipById: async () => {
+    return {
+      startTime: 0,
+      endTime: 5,
+      transcription: ""
+    };
+  }
 };
