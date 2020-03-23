@@ -4,8 +4,8 @@ import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
 import { clipDefaultDuration } from "constants.js";
-import { clipIdAdded, clipIdsFetched } from "redux/clips/clipsSlice";
-import clipService from "redux/clip/clipService";
+import { clipIdAdded } from "redux/clips/clipsSlice";
+import { fetchClipIdsAndFirstClip } from "redux/clips/clipsThunks";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -39,18 +39,8 @@ const App = () => {
   }, [startTime, endTime]);
 
   useEffect(() => {
-    (async () => {
-      const clipIds = await clipService.getClipIds();
-      if (process.env.NODE_ENV === "test") {
-        window.lastAction = "clip ids fetched";
-      }
-      dispatch(clipIdsFetched(clipIds));
-
-      if (clipIds.length > 0) {
-        const clip = await clipService.getClipById(clipIds[0]);
-        dispatch(clipChanged(clip));
-      }
-    })();
+    window.lastAction = "clip ids fetched";
+    dispatch(fetchClipIdsAndFirstClip());
   }, []);
 
   const onTimeUpdate = () => {
@@ -70,6 +60,14 @@ const App = () => {
         clipChanged({
           startTime: clip.endTime,
           endTime: clip.endTime + clipDefaultDuration,
+          transcription: ""
+        })
+      );
+    } else {
+      dispatch(
+        clipChanged({
+          startTime: 0,
+          endTime: 5,
           transcription: ""
         })
       );
