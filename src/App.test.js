@@ -2,7 +2,7 @@ import React from "react";
 import App from "App.js";
 import { renderWithRedux } from "renderWithRedux";
 import userEvent from "@testing-library/user-event";
-import { waitFor, wait } from "@testing-library/dom";
+import { waitFor } from "@testing-library/dom";
 import { fakeClipIdsBuilder, fakeClipBuilder } from "redux/clip/fakeBuilders";
 import clipService from "redux/clip/clipService";
 
@@ -99,19 +99,17 @@ describe("App", () => {
 
     userEvent.click(getByTestId("new-clip-button"));
 
-    const firstClipStartTime = 1;
-    await userEvent.type(
-      getByTestId("loop-start-time"),
-      firstClipStartTime.toString(),
-      { allAtOnce: true }
-    );
+    const startTimeInput = getByTestId("loop-start-time");
+    const firstClipStartTime = 2;
+    await userEvent.type(startTimeInput, firstClipStartTime.toString());
 
+    const endTimeInput = getByTestId("loop-end-time");
     const firstClipEndTime = 3;
-    await userEvent.type(
-      getByTestId("loop-end-time"),
-      firstClipEndTime.toString(),
-      { allAtOnce: true }
-    );
+    await userEvent.type(endTimeInput, firstClipEndTime.toString());
+
+    await waitFor(() => {
+      expect(getByTestId("loop-end-time")).toHaveValue(firstClipEndTime);
+    });
 
     userEvent.click(getByTestId("new-clip-button"));
 

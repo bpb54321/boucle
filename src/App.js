@@ -41,7 +41,7 @@ const App = () => {
   useEffect(() => {
     window.lastAction = "clip ids fetched";
     dispatch(fetchClipIdsAndFirstClip());
-  }, []);
+  }, [dispatch]);
 
   const onTimeUpdate = () => {
     if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {

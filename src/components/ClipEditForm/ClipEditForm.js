@@ -21,6 +21,7 @@ export const ClipEditForm = function() {
     >
       <label htmlFor="loop-start-time">Loop Start Time</label>
       <input
+        data-testid="loop-start-time"
         id="loop-start-time"
         type="number"
         value={localClipState.startTime}
@@ -39,10 +40,10 @@ export const ClipEditForm = function() {
             });
           }
         }}
-        data-testid="loop-start-time"
       />
       <label htmlFor="loop-end-time">Loop End Time</label>
       <input
+        data-testid="loop-end-time"
         id="loop-end-time"
         type="number"
         value={localClipState.endTime}
@@ -61,7 +62,6 @@ export const ClipEditForm = function() {
             });
           }
         }}
-        data-testid="loop-end-time"
       />
       <div>
         <textarea
