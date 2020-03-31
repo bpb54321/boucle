@@ -15,7 +15,9 @@ describe("clipService", () => {
 
     axios.get.mockImplementation(route => {
       if (route === `${apiBaseUrl}/clips`) {
-        return Promise.resolve(fakeClipIds);
+        return Promise.resolve({
+          data: fakeClipIds
+        });
       }
     });
   });
