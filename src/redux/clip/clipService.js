@@ -8,11 +8,9 @@ export default {
     const { data: clipIds } = response;
     return clipIds;
   },
-  getClipById: async () => {
-    return {
-      startTime: 0,
-      endTime: 5,
-      transcription: ""
-    };
+  getClipById: async id => {
+    const response = await axios.get(`${apiBaseUrl}/clips/${id}`);
+    const { data: clip } = response;
+    return clip;
   }
 };
