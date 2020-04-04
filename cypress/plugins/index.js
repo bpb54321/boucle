@@ -1,3 +1,5 @@
+const { Client } = require("pg");
+
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
@@ -18,4 +20,23 @@
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-}
+  on("task", {
+    "clips:delete-all": async () => {
+      const client = new Client({
+        user: "postgres",
+        host: "localhost",
+        database: "postgres",
+        password: "admin",
+        port: 6432
+      });
+
+      await client.connect();
+
+      await client.query("DELETE from clip");
+      await client.end();
+
+      // tasks should not resolve with undefined
+      return null;
+    }
+  });
+};

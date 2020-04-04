@@ -1,5 +1,8 @@
 describe("Mvp user journey", () => {
   it("should allow a user to create new clips", function() {
+    // There are no previously deleted clips
+    cy.task("clips:delete-all");
+
     // The user opens the app
     cy.visit("/");
 
