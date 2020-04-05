@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using BoucleTranscription.Controllers;
 using BoucleTranscription.Models;
@@ -14,7 +16,7 @@ namespace BoucleTransriptionTests.Controller
     public class ClipsControllerTest
     {
         [Fact]
-        public async Task get_clip_by_id_gets_the_correct_clip()
+        public async Task get_clip_by_id_gets_the_correct_clip() 
         {
             int savedClipId;
             const int clipStartTime = 0;
@@ -50,6 +52,33 @@ namespace BoucleTransriptionTests.Controller
         }
         
         [Fact]
+        public async Task get_clips_returns_array_of_all_clips() 
+        {
+            var options = new DbContextOptionsBuilder<BoucleDataContext>()
+                .UseInMemoryDatabase(databaseName: "get_clips_returns_array_of_all_clips").Options;
+            
+            var clip1 = new Clip();
+            var clip2 = new Clip();
+
+            await using (var context = new BoucleDataContext(options))
+            {
+                context.Clips.Add(clip1);
+                context.Clips.Add(clip2);
+                context.SaveChanges();
+            }
+
+            await using (var context = new BoucleDataContext(options))
+            {
+                var clipsController = new ClipsController(context);
+
+                var clipsActionResult = await clipsController.GetAll();
+
+                clipsActionResult.Value.Should().BeEquivalentTo(new List<Clip>{ clip1, clip2 });
+            }
+
+        }
+        
+        [Fact]
         public async Task create_clip_creates_a_clip()
         {
             // Arrange
@@ -68,18 +97,21 @@ namespace BoucleTransriptionTests.Controller
 
 
             // Act
-            ActionResult<Clip> createdClipActionResult;
             await using (var context = new BoucleDataContext(options))
             {
                 var clipController = new ClipsController(context);
 
-                createdClipActionResult = await clipController.Create(clipToCreate);
-
+                var createdClipActionResult = await clipController.Create(clipToCreate);
+                
                 // Assert
-                createdClipActionResult.Value.Id.Should().BePositive();
-                createdClipActionResult.Value.StartTime.Should().Be(clipStartTime);
-                createdClipActionResult.Value.EndTime.Should().Be(clipEndTime);
-                createdClipActionResult.Value.Transcription.Should().Be(clipTranscription);
+                createdClipActionResult.Should().BeOfType<CreatedAtActionResult>();
+                createdClipActionResult.RouteValues.Should().Contain("Id", clipToCreate.Id);
+
+                var clip = createdClipActionResult.Value.As<Clip>();
+                clip.Id.Should().BePositive();
+                clip.StartTime.Should().Be(clipStartTime);
+                clip.EndTime.Should().Be(clipEndTime);
+                clip.Transcription.Should().Be(clipTranscription);
             }
             
 
@@ -87,11 +119,11 @@ namespace BoucleTransriptionTests.Controller
             await using (var context = new BoucleDataContext(options))
             {
                 var allClips = await context.Clips.ToListAsync();
-
+            
                 // Assert
                 allClips.Should().HaveCount(1);
                 var newlyCreatedClip = allClips.First();
-                newlyCreatedClip.Id.Should().Be(createdClipActionResult.Value.Id);
+                newlyCreatedClip.Id.Should().Be(clipToCreate.Id);
                 newlyCreatedClip.StartTime.Should().Be(clipStartTime);
                 newlyCreatedClip.EndTime.Should().Be(clipEndTime);
                 newlyCreatedClip.Transcription.Should().Be(clipTranscription);

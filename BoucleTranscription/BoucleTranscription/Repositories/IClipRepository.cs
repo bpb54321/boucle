@@ -9,5 +9,6 @@ namespace BoucleTranscription.Repositories
     {
         Task<Clip> GetById(int id);
         Task<Clip> Create(Clip clip);
+        Task<List<Clip>> GetAll();
     }
 }

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BoucleTranscription.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BoucleTranscription.Repositories
 {
@@ -19,10 +21,14 @@ namespace BoucleTranscription.Repositories
 
         public async Task<Clip> Create(Clip clip)
         {
-            _context.Set<Clip>().Add(clip);
+            _context.Clips.Add(clip);
             await _context.SaveChangesAsync();
             return clip;
         }
-        
+
+        public async Task<List<Clip>> GetAll()
+        {
+            return await _context.Clips.ToListAsync();
+        }
     }
 }
