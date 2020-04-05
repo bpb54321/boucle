@@ -10,6 +10,20 @@ export const fakeClipIdsBuilder = arrayLength => {
   return clipIds;
 };
 
+export const fakeClipsBuilder = arrayLength => {
+  let clips = [];
+  for (let index = 1; index <= arrayLength; index++) {
+    const fakeId = faker.random.number({ min: 1, max: 100 });
+    const fakeClip = fakeClipBuilder({
+      overrides: {
+        id: index
+      }
+    });
+    clips.push(fakeClip);
+  }
+  return clips;
+};
+
 export const fakeClipBuilder = build("Clip", {
   fields: {
     id: fake(f => f.random.number({ min: 1, max: 20 })),

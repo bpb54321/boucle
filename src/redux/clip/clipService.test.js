@@ -1,6 +1,6 @@
 import clipService from "redux/clip/clipService";
 import axios from "axios";
-import { fakeClipBuilder, fakeClipIdsBuilder } from "redux/clip/fakeBuilders";
+import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
@@ -11,25 +11,25 @@ describe("clipService", () => {
     jest.resetAllMocks();
   });
 
-  describe("getClipIds", () => {
-    test("should return the clip ids it gets from the server", async () => {
+  describe("getClips", () => {
+    test("should return the clips it gets from the server", async () => {
       // Arrange
-      const numFakeClipIds = 2;
-      const fakeClipIds = fakeClipIdsBuilder(numFakeClipIds);
+      const numFakeClips = 2;
+      const fakeClips = fakeClipsBuilder(numFakeClips);
 
       axios.get.mockImplementation(route => {
         if (route === `${apiBaseUrl}/clips`) {
           return Promise.resolve({
-            data: fakeClipIds
+            data: fakeClips
           });
         }
       });
 
       // Act
-      const gottenClipIds = await clipService.getClipIds();
+      const gottenClips = await clipService.getClips();
 
       // Assert
-      expect(gottenClipIds).toStrictEqual(fakeClipIds);
+      expect(gottenClips).toStrictEqual(fakeClips);
     });
   });
 

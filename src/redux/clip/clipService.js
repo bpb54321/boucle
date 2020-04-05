@@ -3,10 +3,10 @@ import axios from "axios";
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
 export default {
-  getClipIds: async () => {
+  getClips: async () => {
     const response = await axios.get(`${apiBaseUrl}/clips`);
-    const { data: clipIds } = response;
-    return clipIds;
+    const { data: clips } = response;
+    return clips;
   },
   getClipById: async id => {
     const response = await axios.get(`${apiBaseUrl}/clips/${id}`);
