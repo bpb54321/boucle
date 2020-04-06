@@ -39,7 +39,7 @@ const App = () => {
   }, [startTime, endTime]);
 
   useEffect(() => {
-    window.lastAction = "clip ids fetched";
+    window.lastAction = "clips fetched";
     dispatch(fetchClipIdsAndFirstClip());
   }, [dispatch]);
 

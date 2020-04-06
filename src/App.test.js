@@ -16,8 +16,8 @@ describe("App", () => {
 
   test("should not display a clip edit form if no clips have yet been created for the media document", async () => {
     // Arrange
-    const emptyClipIds = [];
-    clipService.getClipIds.mockResolvedValue(emptyClipIds);
+    const emptyClipArray = [];
+    clipService.getClips.mockResolvedValue(emptyClipArray);
 
     // Act
     const { queryByTestId, getByTestId } = renderWithRedux(<App />);
@@ -26,7 +26,7 @@ describe("App", () => {
     await waitFor(() => {
       expect(getByTestId("app")).toHaveAttribute(
         "data-last-action",
-        "clip ids fetched"
+        "clips fetched"
       );
     });
 

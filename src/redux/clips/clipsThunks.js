@@ -3,7 +3,7 @@ import { clipChanged } from "redux/clip/clipSlice";
 import clipService from "redux/clip/clipService";
 
 export const fetchClipIdsAndFirstClip = () => async dispatch => {
-  const clipIds = await clipService.getClipIds();
+  const clipIds = await clipService.getClips();
   dispatch(clipIdsFetched(clipIds));
 
   if (clipIds.length > 0) {
