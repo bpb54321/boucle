@@ -9,7 +9,7 @@ const clipsSlice = createSlice({
     clipIdAdded: (state, action) => {
       state.clipIds.push(action.payload);
     },
-    clipIdsFetched: (state, action) => {
+    clipsFetched: (state, action) => {
       state.clipIds = action.payload;
     }
   }
@@ -17,4 +17,4 @@ const clipsSlice = createSlice({
 
 export const clipsReducer = clipsSlice.reducer;
 
-export const { clipIdAdded, clipIdsFetched } = clipsSlice.actions;
+export const { clipIdAdded, clipsFetched } = clipsSlice.actions;

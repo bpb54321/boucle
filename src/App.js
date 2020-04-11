@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
 import { clipDefaultDuration } from "constants.js";
 import { clipIdAdded } from "redux/clips/clipsSlice";
-import { fetchClipIdsAndFirstClip } from "redux/clips/clipsThunks";
+import { fetchClips } from "redux/clips/clipsThunks";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ const App = () => {
 
   useEffect(() => {
     window.lastAction = "clips fetched";
-    dispatch(fetchClipIdsAndFirstClip());
+    dispatch(fetchClips());
   }, [dispatch]);
 
   const onTimeUpdate = () => {

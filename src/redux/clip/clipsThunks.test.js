@@ -1,18 +1,22 @@
-import { clipIdsFetched } from "redux/clips/clipsSlice";
+import { clipsFetched } from "redux/clips/clipsSlice";
 import { clipChanged } from "redux/clip/clipSlice";
-import { fetchClipIdsAndFirstClip } from "redux/clips/clipsThunks";
+import { fetchClips } from "redux/clips/clipsThunks";
 import clipService from "redux/clip/clipService";
-import { fakeClipBuilder, fakeClipIdsBuilder } from "redux/clip/fakeBuilders";
+import {
+  fakeClipBuilder,
+  fakeClipIdsBuilder,
+  fakeClipsBuilder
+} from "redux/clip/fakeBuilders";
 
 let dispatch = jest.fn();
 
 jest.mock("redux/clip/clipService");
 
-const clipIdsFetchedAction = Symbol("clip ids fetched action");
+const clipsFetchedAction = Symbol("clips fetched action");
 jest.mock("redux/clips/clipsSlice", () => {
   return {
     __esModule: true,
-    clipIdsFetched: jest.fn()
+    clipsFetched: jest.fn()
   };
 });
 
@@ -28,25 +32,23 @@ describe("clipsThunks", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     dispatch.mockName("dispatch");
-    clipIdsFetched
-      .mockName("clipIdsFetched")
-      .mockReturnValue(clipIdsFetchedAction);
+    clipsFetched.mockName("clipsFetched").mockReturnValue(clipsFetchedAction);
     clipChanged.mockName("clipChanged").mockReturnValue(clipChangedAction);
   });
 
-  describe("fetchClipIdsAndFirstClip", () => {
-    test("should fetch clip ids from the service and dispatch clipIdsFetch", async () => {
+  describe("fetchClips", () => {
+    test("should fetch clips from the service and dispatch clipsFetched", async () => {
       // Arrange
       const numberClipIds = 2;
-      const clipIds = fakeClipIdsBuilder(numberClipIds);
-      clipService.getClipIds.mockResolvedValue(clipIds);
+      const clips = fakeClipsBuilder(numberClipIds);
+      clipService.getClips.mockResolvedValue(clips);
 
       // Act
-      await fetchClipIdsAndFirstClip()(dispatch);
+      await fetchClips()(dispatch);
 
       // Assert
-      expect(clipIdsFetched).toHaveBeenCalledWith(clipIds);
-      expect(dispatch).toHaveBeenCalledWith(clipIdsFetchedAction);
+      expect(clipsFetched).toHaveBeenCalledWith(clips);
+      expect(dispatch).toHaveBeenCalledWith(clipsFetchedAction);
     });
 
     test("should fetch the clip with the first id in clip ids if clip ids has a length greater than 0", async () => {
@@ -66,7 +68,7 @@ describe("clipsThunks", () => {
       });
 
       // Act
-      await fetchClipIdsAndFirstClip()(dispatch);
+      await fetchClips()(dispatch);
 
       // Assert
       expect(clipChanged).toHaveBeenCalledWith(clip);
@@ -80,7 +82,7 @@ describe("clipsThunks", () => {
       clipService.getClipIds.mockResolvedValue(clipIds);
 
       // Act
-      await fetchClipIdsAndFirstClip()(dispatch);
+      await fetchClips()(dispatch);
 
       // Assert
       expect(clipService.getClipById).not.toHaveBeenCalled();
