@@ -2,11 +2,7 @@ import { clipsFetched } from "redux/clips/clipsSlice";
 import { clipChanged } from "redux/clip/clipSlice";
 import { fetchClips } from "redux/clips/clipsThunks";
 import clipService from "redux/clip/clipService";
-import {
-  fakeClipBuilder,
-  fakeClipIdsBuilder,
-  fakeClipsBuilder
-} from "redux/clip/fakeBuilders";
+import { fakeClipsBuilder } from "redux/clip/fakeBuilders";
 
 let dispatch = jest.fn();
 
@@ -49,44 +45,6 @@ describe("clipsThunks", () => {
       // Assert
       expect(clipsFetched).toHaveBeenCalledWith(clips);
       expect(dispatch).toHaveBeenCalledWith(clipsFetchedAction);
-    });
-
-    test("should fetch the clip with the first id in clip ids if clip ids has a length greater than 0", async () => {
-      // Arrange
-      const numberClipIds = 2;
-      const clipIds = fakeClipIdsBuilder(numberClipIds);
-      const clip = fakeClipBuilder({
-        overrides: {
-          id: clipIds[0]
-        }
-      });
-      clipService.getClipIds.mockResolvedValue(clipIds);
-      clipService.getClipById.mockImplementation(id => {
-        if (id === clipIds[0]) {
-          return Promise.resolve(clip);
-        }
-      });
-
-      // Act
-      await fetchClips()(dispatch);
-
-      // Assert
-      expect(clipChanged).toHaveBeenCalledWith(clip);
-      expect(dispatch).toHaveBeenCalledWith(clipChangedAction);
-    });
-
-    test("should not fetch any clips if there are no clip ids", async () => {
-      // Arrange
-      const numberClipIds = 0;
-      const clipIds = fakeClipIdsBuilder(numberClipIds);
-      clipService.getClipIds.mockResolvedValue(clipIds);
-
-      // Act
-      await fetchClips()(dispatch);
-
-      // Assert
-      expect(clipService.getClipById).not.toHaveBeenCalled();
-      expect(clipChanged).not.toHaveBeenCalled();
     });
   });
 });
