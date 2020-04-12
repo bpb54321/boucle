@@ -40,6 +40,13 @@ namespace BoucleTranscription
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors((builder) =>
+            {
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+                builder.AllowAnyOrigin();
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
