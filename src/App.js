@@ -5,8 +5,7 @@ import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { getClip, getClips } from "redux/selectors";
 import { clipDefaultDuration } from "constants.js";
-import { clipAdded } from "redux/clips/clipsSlice";
-import { fetchClips } from "redux/clips/clipsThunks";
+import { addClip, fetchClips } from "redux/clips/clipsThunks";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -21,7 +20,7 @@ const App = () => {
   const handleAddClip = () => {
     if (clips.length > 0) {
       dispatch(
-        clipAdded({
+        addClip({
           startTime: clip.endTime,
           endTime: clip.endTime + clipDefaultDuration,
           transcription: ""
@@ -29,7 +28,7 @@ const App = () => {
       );
     } else {
       dispatch(
-        clipAdded({
+        addClip({
           startTime: 0,
           endTime: 5,
           transcription: ""
