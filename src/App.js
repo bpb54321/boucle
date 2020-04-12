@@ -3,7 +3,7 @@ import { ClipPlayer } from "components/ClipPlayer";
 import React, { useEffect } from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
-import { getClips, getCurrentClipIndex } from "redux/selectors";
+import { getClip, getClips } from "redux/selectors";
 import { clipDefaultDuration } from "constants.js";
 import { clipAdded } from "redux/clips/clipsSlice";
 import { fetchClips } from "redux/clips/clipsThunks";
@@ -11,18 +11,7 @@ import { fetchClips } from "redux/clips/clipsThunks";
 const App = () => {
   const dispatch = useDispatch();
   const clips = useSelector(getClips);
-  const currentClipIndex = useSelector(getCurrentClipIndex);
-
-  let clip;
-  if (clips.length > 0) {
-    clip = clips[currentClipIndex];
-  } else {
-    clip = {
-      startTime: 0,
-      endTime: 0,
-      transcription: ""
-    };
-  }
+  const clip = useSelector(getClip);
 
   useEffect(() => {
     window.lastAction = "clips fetched";

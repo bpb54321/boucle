@@ -46,5 +46,49 @@ describe("clipsThunks", () => {
       expect(clipsFetched).toHaveBeenCalledWith(clips);
       expect(dispatch).toHaveBeenCalledWith(clipsFetchedAction);
     });
+    test("should dispatch clipChanged with the first clip of the clips if there are one or more clips in the response from the server", async () => {
+      // Arrange
+      const numberClipIds = 1;
+      const clips = fakeClipsBuilder(numberClipIds);
+      clipService.getClips.mockResolvedValue(clips);
+
+      // Act
+      await fetchClips()(dispatch);
+
+      // Assert
+      expect(clipChanged).toHaveBeenCalledWith(clips[0]);
+      expect(dispatch).toHaveBeenCalledWith(clipChangedAction);
+    });
+
+    test("should not dispatch clipChanged if there are 0 clips returned from the server", async () => {
+      // Arrange
+      const numberClips = 0;
+      const clips = fakeClipsBuilder(numberClips);
+      clipService.getClips.mockResolvedValue(clips);
+
+      // Act
+      await fetchClips()(dispatch);
+
+      // Assert
+      expect(clipChanged).not.toHaveBeenCalled();
+      expect(dispatch).not.toHaveBeenCalledWith(clipChangedAction);
+    });
+  });
+
+  describe("addClip", () => {
+    test("should dispatch clipAdded with the provided clip", async () => {
+      // // Arrange
+      // const numberClipIds = 2;
+      // const clips = fakeClipsBuilder(numberClipIds);
+      // clipService.getClips.mockResolvedValue(clips);
+      //
+      // // Act
+      // await fetchClips()(dispatch);
+      //
+      // // Assert
+      // expect(clipsFetched).toHaveBeenCalledWith(clips);
+      // expect(dispatch).toHaveBeenCalledWith(clipsFetchedAction);
+    });
+    test("should dispatch clipChanged with the provided clip", async () => {});
   });
 });
