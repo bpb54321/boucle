@@ -3,7 +3,7 @@ import App from "App.js";
 import { renderWithRedux } from "renderWithRedux";
 import userEvent from "@testing-library/user-event";
 import { waitFor } from "@testing-library/dom";
-import { fakeClipIdsBuilder, fakeClipBuilder } from "redux/clip/fakeBuilders";
+import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
 import clipService from "redux/clip/clipService";
 
 jest.mock("redux/clip/clipService");
@@ -38,19 +38,9 @@ describe("App", () => {
   test("should display the first clip of the media document when the app is loaded if there is at least one clip", async () => {
     // Arrange
     const numberClipIds = 1;
-    const clipIds = fakeClipIdsBuilder(numberClipIds);
-    const clip = fakeClipBuilder({
-      overrides: {
-        id: clipIds[0]
-      }
-    });
+    const clips = fakeClipsBuilder(numberClipIds);
 
-    clipService.getClipIds.mockResolvedValue(clipIds);
-    clipService.getClipById.mockImplementation(id => {
-      if (id === clipIds[0]) {
-        return Promise.resolve(clip);
-      }
-    });
+    clipService.getClips.mockResolvedValue(clips);
 
     // Act
     const { findByTestId } = renderWithRedux(<App />);
@@ -59,15 +49,17 @@ describe("App", () => {
     const clipTranscriptionInput = await findByTestId("transcription-input");
 
     // Assert
-    await waitFor(() => expect(clipStartTimeInput).toHaveValue(clip.startTime));
-    expect(clipEndTimeInput).toHaveValue(clip.endTime);
-    expect(clipTranscriptionInput).toHaveValue(clip.transcription);
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[0].startTime)
+    );
+    expect(clipEndTimeInput).toHaveValue(clips[0].endTime);
+    expect(clipTranscriptionInput).toHaveValue(clips[0].transcription);
   });
 
   test("given there are no existing clips, when user clicks the New Clip button, should display an edit form for a new clip", async () => {
     // Arrange
-    const emptyClipIds = [];
-    clipService.getClipIds.mockResolvedValue(emptyClipIds);
+    const emptyClipArray = [];
+    clipService.getClips.mockResolvedValue(emptyClipArray);
 
     // Act
     const { getByTestId, queryByTestId } = renderWithRedux(<App />);
@@ -82,31 +74,16 @@ describe("App", () => {
     expect(getByTestId("clip-edit-form")).toBeInTheDocument();
   });
 
-  test("should set new clip start and end time defaults when the user clicks Add Clip when at least one other clip exists", async () => {
+  test("should set new clip start and end time defaults when the user clicks Add Clip given at least one other clip exists", async () => {
     // Arrange
-    const emptyClipIds = [];
-    clipService.getClipIds.mockResolvedValue(emptyClipIds);
+    const numberOfExistingClips = 1;
+    const clips = fakeClipsBuilder(numberOfExistingClips);
+    clipService.getClips.mockResolvedValue(clips);
 
     // Act
     const { getByTestId } = renderWithRedux(<App />);
 
-    await waitFor(() => {
-      expect(getByTestId("app")).toHaveAttribute(
-        "data-last-action",
-        "clip ids fetched"
-      );
-    });
-
-    userEvent.click(getByTestId("new-clip-button"));
-
-    const startTimeInput = getByTestId("loop-start-time");
-    const firstClipStartTime = 2;
-    await userEvent.type(startTimeInput, firstClipStartTime.toString());
-
-    const endTimeInput = getByTestId("loop-end-time");
-    const firstClipEndTime = 3;
-    await userEvent.type(endTimeInput, firstClipEndTime.toString());
-
+    const firstClipEndTime = clips[0].endTime;
     await waitFor(() => {
       expect(getByTestId("loop-end-time")).toHaveValue(firstClipEndTime);
     });
@@ -114,16 +91,14 @@ describe("App", () => {
     userEvent.click(getByTestId("new-clip-button"));
 
     // Assert
-    const expectedSecondClipStartTime = firstClipEndTime;
+    const secondClipStartTimeInput = getByTestId("loop-start-time");
     await waitFor(() => {
-      expect(getByTestId("loop-start-time")).toHaveValue(
-        expectedSecondClipStartTime
-      );
+      expect(secondClipStartTimeInput).toHaveValue(firstClipEndTime);
     });
 
     const defaultClipDuration = 3;
     const expectedSecondClipEndTime =
-      expectedSecondClipStartTime + defaultClipDuration;
+      parseInt(secondClipStartTimeInput.value) + defaultClipDuration;
 
     expect(getByTestId("loop-end-time")).toHaveValue(expectedSecondClipEndTime);
   });

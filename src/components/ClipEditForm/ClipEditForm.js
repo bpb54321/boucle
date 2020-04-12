@@ -1,16 +1,17 @@
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { clipChanged } from "redux/clip/clipSlice";
-import { getClip } from "redux/clip/clipSelectors";
+import { getClips, getCurrentClipIndex } from "redux/clip/clipSelectors";
 
-export const ClipEditForm = function() {
+export const ClipEditForm = function({ clip, ...props }) {
   const dispatch = useDispatch();
-  const clip = useSelector(getClip);
-  const [localClipState, setLocalClipState] = useState(clip);
+  const clips = useSelector(getClips);
+  const currentClipIndex = useSelector(getCurrentClipIndex);
+  const [localClipState, setLocalClipState] = useState(clips[0]);
 
   useEffect(() => {
-    setLocalClipState(clip);
-  }, [clip]);
+    setLocalClipState(clips[currentClipIndex]);
+  }, [currentClipIndex]);
 
   return (
     <form
@@ -27,12 +28,12 @@ export const ClipEditForm = function() {
         value={localClipState.startTime}
         onChange={event => {
           if (event.target.value) {
-            dispatch(
-              clipChanged({
-                ...clip,
-                startTime: parseInt(event.target.value)
-              })
-            );
+            // dispatch(
+            //   clipChanged({
+            //     ...clip,
+            //     startTime: parseInt(event.target.value)
+            //   })
+            // );
           } else {
             setLocalClipState({
               ...localClipState,
@@ -49,12 +50,12 @@ export const ClipEditForm = function() {
         value={localClipState.endTime}
         onChange={event => {
           if (event.target.value) {
-            dispatch(
-              clipChanged({
-                ...clip,
-                endTime: parseInt(event.target.value)
-              })
-            );
+            // dispatch(
+            //   clipChanged({
+            //     ...clip,
+            //     endTime: parseInt(event.target.value)
+            //   })
+            // );
           } else {
             setLocalClipState({
               ...localClipState,
@@ -69,12 +70,12 @@ export const ClipEditForm = function() {
           data-testid="transcription-input"
           type="textarea"
           onChange={event => {
-            dispatch(
-              clipChanged({
-                ...clip,
-                transcription: event.target.value
-              })
-            );
+            // dispatch(
+            //   clipChanged({
+            //     ...clip,
+            //     transcription: event.target.value
+            //   })
+            // );
           }}
           value={localClipState.transcription}
         />

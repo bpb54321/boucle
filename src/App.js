@@ -2,25 +2,35 @@ import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
+import { getClips, getCurrentClipIndex } from "redux/clip/clipSelectors";
 import { clipChanged } from "redux/clip/clipSlice";
 import { clipDefaultDuration } from "constants.js";
-import { clipIdAdded } from "redux/clips/clipsSlice";
+import { clipAdded } from "redux/clips/clipsSlice";
 import { fetchClips } from "redux/clips/clipsThunks";
 
 const App = () => {
   const dispatch = useDispatch();
-  const clip = useSelector(state => state.clip);
-  const clipIds = useSelector(state => state.clips.clipIds);
-  const { startTime, endTime } = clip;
+  const clips = useSelector(getClips);
+  const currentClipIndex = useSelector(getCurrentClipIndex);
+
+  let clip;
+  if (clips.length > 0) {
+    clip = clips[currentClipIndex];
+  } else {
+    clip = {
+      startTime: 0,
+      endTime: 0
+    };
+  }
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
   const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);
 
   const audioPlayerRef = useRef();
   const handleStartLoop = useCallback(() => {
-    audioPlayerRef.current.currentTime = startTime;
+    audioPlayerRef.current.currentTime = clip.startTime;
     audioPlayerRef.current.play();
-  }, [startTime]);
+  }, [clip.startTime]);
 
   function handleStopLoop() {
     audioPlayerRef.current.pause();
@@ -34,9 +44,9 @@ const App = () => {
   }, [isStopped, finishedBreak, handleStartLoop]);
 
   useEffect(() => {
-    const loopDuration = endTime - startTime;
+    const loopDuration = clip.endTime - clip.startTime;
     setPauseTimeBetweenLoops(loopDuration);
-  }, [startTime, endTime]);
+  }, [clip.startTime, clip.endTime]);
 
   useEffect(() => {
     window.lastAction = "clips fetched";
@@ -44,7 +54,7 @@ const App = () => {
   }, [dispatch]);
 
   const onTimeUpdate = () => {
-    if (Math.floor(audioPlayerRef.current.currentTime) === endTime) {
+    if (Math.floor(audioPlayerRef.current.currentTime) === clip.endTime) {
       audioPlayerRef.current.pause();
       setFinishedBreak(false);
 
@@ -55,9 +65,9 @@ const App = () => {
   };
 
   const handleAddClip = () => {
-    if (clipIds.length > 0) {
+    if (clips.length > 0) {
       dispatch(
-        clipChanged({
+        clipAdded({
           startTime: clip.endTime,
           endTime: clip.endTime + clipDefaultDuration,
           transcription: ""
@@ -65,14 +75,13 @@ const App = () => {
       );
     } else {
       dispatch(
-        clipChanged({
+        clipAdded({
           startTime: 0,
           endTime: 5,
           transcription: ""
         })
       );
     }
-    dispatch(clipIdAdded(10));
   };
 
   return (
@@ -105,7 +114,7 @@ const App = () => {
             Stop
           </button>
         </div>
-        {clipIds.length > 0 ? <ClipEditForm /> : null}
+        {clips.length > 0 ? <ClipEditForm /> : null}
       </main>
     </div>
   );

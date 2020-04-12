@@ -1,20 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const clipsSlice = createSlice({
-  name: "clips",
+  name: "clipsSlice",
   initialState: {
-    clipIds: []
+    clips: [],
+    currentClipIndex: 0
   },
   reducers: {
-    clipIdAdded: (state, action) => {
-      state.clipIds.push(action.payload);
+    clipAdded: (state, action) => {
+      state.clips.push(action.payload);
+      state.currentClipIndex++;
     },
     clipsFetched: (state, action) => {
-      state.clipIds = action.payload;
+      state.clips = action.payload;
+      state.currentClipIndex = 0;
     }
   }
 });
 
 export const clipsReducer = clipsSlice.reducer;
 
-export const { clipIdAdded, clipsFetched } = clipsSlice.actions;
+export const { clipAdded, clipsFetched } = clipsSlice.actions;
