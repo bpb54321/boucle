@@ -1,34 +1,26 @@
-import { clipsFetched } from "redux/clips/clipsSlice";
+import { clipsFetched, clipAdded } from "redux/clips/clipsSlice";
 import { clipChanged } from "redux/clip/clipSlice";
-import { fetchClips } from "redux/clips/clipsThunks";
+import { fetchClips, addClip } from "redux/clips/clipsThunks";
 import clipService from "redux/clip/clipService";
-import { fakeClipsBuilder } from "redux/clip/fakeBuilders";
+import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
 
 let dispatch = jest.fn();
 
 jest.mock("redux/clip/clipService");
 
 const clipsFetchedAction = Symbol("clips fetched action");
-jest.mock("redux/clips/clipsSlice", () => {
-  return {
-    __esModule: true,
-    clipsFetched: jest.fn()
-  };
-});
+const clipAddedAction = Symbol("clip added action");
+jest.mock("redux/clips/clipsSlice");
 
 const clipChangedAction = Symbol("clip changed action");
-jest.mock("redux/clip/clipSlice", () => {
-  return {
-    __esModule: true,
-    clipChanged: jest.fn()
-  };
-});
+jest.mock("redux/clip/clipSlice");
 
 describe("clipsThunks", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     dispatch.mockName("dispatch");
     clipsFetched.mockName("clipsFetched").mockReturnValue(clipsFetchedAction);
+    clipAdded.mockName("clipAdded").mockReturnValue(clipAddedAction);
     clipChanged.mockName("clipChanged").mockReturnValue(clipChangedAction);
   });
 
@@ -77,18 +69,26 @@ describe("clipsThunks", () => {
 
   describe("addClip", () => {
     test("should dispatch clipAdded with the provided clip", async () => {
-      // // Arrange
-      // const numberClipIds = 2;
-      // const clips = fakeClipsBuilder(numberClipIds);
-      // clipService.getClips.mockResolvedValue(clips);
-      //
-      // // Act
-      // await fetchClips()(dispatch);
-      //
-      // // Assert
-      // expect(clipsFetched).toHaveBeenCalledWith(clips);
-      // expect(dispatch).toHaveBeenCalledWith(clipsFetchedAction);
+      // Arrange
+      const clip = fakeClipBuilder();
+
+      // Act
+      await addClip(clip)(dispatch);
+
+      // Assert
+      expect(clipAdded).toHaveBeenCalledWith(clip);
+      expect(dispatch).toHaveBeenCalledWith(clipAddedAction);
     });
-    test("should dispatch clipChanged with the provided clip", async () => {});
+    test("should dispatch clipChanged with the provided clip", async () => {
+      // Arrange
+      const clip = fakeClipBuilder();
+
+      // Act
+      await addClip(clip)(dispatch);
+
+      // Assert
+      expect(clipChanged).toHaveBeenCalledWith(clip);
+      expect(dispatch).toHaveBeenCalledWith(clipChangedAction);
+    });
   });
 });
