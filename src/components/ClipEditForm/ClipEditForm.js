@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { getClip } from "redux/selectors";
 
-export const ClipEditForm = ({ clip }) => {
+export const ClipEditForm = () => {
+  const clip = useSelector(getClip);
   const [localClipState, setLocalClipState] = useState(clip);
 
   useEffect(() => {

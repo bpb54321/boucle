@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { getClip } from "redux/selectors";
 
-export const ClipPlayer = ({ clip }) => {
+export const ClipPlayer = () => {
+  const clip = useSelector(getClip);
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
   const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);

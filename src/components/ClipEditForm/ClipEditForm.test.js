@@ -4,18 +4,26 @@ import { fakeClipBuilder } from "redux/clip/fakeBuilders";
 import userEvent from "@testing-library/user-event";
 import { render } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
+import { useSelector } from "react-redux";
+import { getClip } from "redux/selectors";
+
+jest.mock("react-redux");
+jest.mock("redux/selectors");
 
 describe("ClipEditForm", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    useSelector.mockImplementation(selector => selector());
+    getClip.mockName("getClip");
   });
 
   test("should display clip properties of the clip passed to it", async () => {
     // Arrange
     const clip = fakeClipBuilder();
+    getClip.mockReturnValue(clip);
 
     // Act
-    const { getByTestId } = render(<ClipEditForm clip={clip} />);
+    const { getByTestId } = render(<ClipEditForm />);
     const transcriptionInput = getByTestId("transcription-input");
     const startTimeInput = getByTestId("loop-start-time");
     const endTimeInput = getByTestId("loop-end-time");
@@ -29,7 +37,8 @@ describe("ClipEditForm", () => {
   test("should update display of startTime, endTime, and transcription when the user updates these values", async () => {
     // Act
     const oldClip = fakeClipBuilder();
-    const renderResult = render(<ClipEditForm clip={oldClip} />);
+    getClip.mockReturnValue(oldClip);
+    const renderResult = render(<ClipEditForm />);
     const { getByTestId } = renderResult;
 
     const startTimeInput = getByTestId("loop-start-time");
