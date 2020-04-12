@@ -19,7 +19,8 @@ const App = () => {
   } else {
     clip = {
       startTime: 0,
-      endTime: 0
+      endTime: 0,
+      transcription: ""
     };
   }
   const [isStopped, setIsStopped] = useState(false);
@@ -114,7 +115,7 @@ const App = () => {
             Stop
           </button>
         </div>
-        {clips.length > 0 ? <ClipEditForm /> : null}
+        {clips.length > 0 ? <ClipEditForm clip={clip} /> : null}
       </main>
     </div>
   );

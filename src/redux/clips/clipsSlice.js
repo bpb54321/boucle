@@ -9,11 +9,10 @@ const clipsSlice = createSlice({
   reducers: {
     clipAdded: (state, action) => {
       state.clips.push(action.payload);
-      state.currentClipIndex++;
+      state.currentClipIndex = state.clips.length - 1;
     },
     clipsFetched: (state, action) => {
       state.clips = action.payload;
-      state.currentClipIndex = 0;
     }
   }
 });

@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export const ClipEditForm = ({ clip }) => {
   const [localClipState, setLocalClipState] = useState(clip);
+
+  useEffect(() => {
+    setLocalClipState(clip);
+  }, [clip]);
 
   return (
     <form

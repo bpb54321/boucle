@@ -37,13 +37,14 @@ describe("App", () => {
 
   test("should display the first clip of the media document when the app is loaded if there is at least one clip", async () => {
     // Arrange
-    const numberClipIds = 1;
-    const clips = fakeClipsBuilder(numberClipIds);
+    const numberClips = 1;
+    const clips = fakeClipsBuilder(numberClips);
 
     clipService.getClips.mockResolvedValue(clips);
 
     // Act
-    const { findByTestId } = renderWithRedux(<App />);
+    const renderResult = renderWithRedux(<App />);
+    const { findByTestId } = renderResult;
     const clipStartTimeInput = await findByTestId("loop-start-time");
     const clipEndTimeInput = await findByTestId("loop-end-time");
     const clipTranscriptionInput = await findByTestId("transcription-input");
@@ -105,32 +106,26 @@ describe("App", () => {
 
   test("should set new clip transcription default when the user clicks Add Clip when at least one other clip exists", async () => {
     // Arrange
-    const emptyClipIds = [];
-    clipService.getClipIds.mockResolvedValue(emptyClipIds);
+    const numberOfExistingClips = 1;
+    const clips = fakeClipsBuilder(numberOfExistingClips);
+    clipService.getClips.mockResolvedValue(clips);
+    const existingClip = clips[0];
+    const defaultNewClipTranscription = "";
+
+    // Assert
+    expect(existingClip.transcription).not.toBe(defaultNewClipTranscription);
 
     // Act
-    const { getByTestId } = renderWithRedux(<App />);
+    const { getByTestId, findByTestId } = renderWithRedux(<App />);
 
-    await waitFor(() => {
-      expect(getByTestId("app")).toHaveAttribute(
-        "data-last-action",
-        "clip ids fetched"
-      );
-    });
+    // Assert
+    const transcriptionInput = await findByTestId("transcription-input");
+    expect(transcriptionInput).toHaveValue(existingClip.transcription);
 
-    userEvent.click(getByTestId("new-clip-button"));
-
-    const firstClipTranscription = "This is the first clip transcription";
-    await userEvent.type(
-      getByTestId("transcription-input"),
-      firstClipTranscription,
-      { allAtOnce: true }
-    );
-
+    // Act
     userEvent.click(getByTestId("new-clip-button"));
 
     // Assert
-    const defaultNewClipTranscription = "";
     await waitFor(() => {
       expect(getByTestId("transcription-input")).toHaveValue(
         defaultNewClipTranscription
