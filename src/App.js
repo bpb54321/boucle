@@ -3,7 +3,7 @@ import { ClipPlayer } from "components/ClipPlayer";
 import React, { useEffect } from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
-import { getClips, getCurrentClipIndex } from "redux/clip/clipSelectors";
+import { getClips, getCurrentClipIndex } from "redux/selectors";
 import { clipDefaultDuration } from "constants.js";
 import { clipAdded } from "redux/clips/clipsSlice";
 import { fetchClips } from "redux/clips/clipsThunks";
