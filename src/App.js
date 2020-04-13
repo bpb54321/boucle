@@ -8,6 +8,9 @@ import { getClips } from "redux/selectors";
 import { fetchClips } from "redux/clips/clipsThunks";
 
 const App = () => {
+  window.totalNumberOfRenders++;
+  console.log(`App rendered`);
+
   const dispatch = useDispatch();
   const clips = useSelector(getClips);
 

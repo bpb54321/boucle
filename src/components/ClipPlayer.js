@@ -3,10 +3,15 @@ import { useSelector } from "react-redux";
 import { getClip } from "redux/selectors";
 
 export const ClipPlayer = () => {
+  window.totalNumberOfRenders++;
+  console.log(`ClipPlayer rendered`);
+
   const clip = useSelector(getClip);
+  const loopDuration = clip.endTime - clip.startTime;
+  const pauseTimeBetweenLoops = loopDuration;
+
   const [isStopped, setIsStopped] = useState(false);
   const [finishedBreak, setFinishedBreak] = useState(false);
-  const [pauseTimeBetweenLoops, setPauseTimeBetweenLoops] = useState(0);
 
   const audioPlayerRef = useRef();
   const handleStartLoop = useCallback(() => {
@@ -36,18 +41,13 @@ export const ClipPlayer = () => {
     }
   }, [isStopped, finishedBreak, handleStartLoop]);
 
-  useEffect(() => {
-    const loopDuration = clip.endTime - clip.startTime;
-    setPauseTimeBetweenLoops(loopDuration);
-  }, [clip.startTime, clip.endTime]);
-
   return (
     <div>
       <audio
         ref={audioPlayerRef}
         data-testid={"audio-player"}
         controls
-        src="../public/infoman-s20-e24.mp4"
+        src="infoman-s20-e24.mp4"
         onTimeUpdate={onTimeUpdate}
       >
         Your browser does not support the

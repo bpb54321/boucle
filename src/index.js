@@ -7,6 +7,7 @@ import * as serviceWorker from "./serviceWorker";
 import { store } from "redux/store";
 import { Provider } from "react-redux";
 
+window.totalNumberOfRenders = 0;
 ReactDOM.render(
   <Provider store={store}>
     <App />

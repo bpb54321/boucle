@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { getClip } from "redux/selectors";
 
 export const ClipEditForm = () => {
+  console.log(`ClipEditForm rendered`);
+  window.totalNumberOfRenders++;
   const clip = useSelector(getClip);
   const [localClipState, setLocalClipState] = useState(clip);
 
