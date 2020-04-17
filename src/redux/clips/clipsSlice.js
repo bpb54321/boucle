@@ -13,10 +13,13 @@ const clipsSlice = createSlice({
     },
     clipsFetched: (state, action) => {
       state.clips = action.payload;
+    },
+    clipIndexChanged: (state, action) => {
+      state.currentClipIndex = action.payload;
     }
   }
 });
 
 export const clipsReducer = clipsSlice.reducer;
 
-export const { clipAdded, clipsFetched } = clipsSlice.actions;
+export const { clipAdded, clipsFetched, clipIndexChanged } = clipsSlice.actions;

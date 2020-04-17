@@ -5,8 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { getClip, getClips } from "redux/selectors";
 
 export const ClipAdder = () => {
-  console.log(`ClipAdder rendered`);
-  window.totalNumberOfRenders++;
   const dispatch = useDispatch();
   const clips = useSelector(getClips);
   const clip = useSelector(getClip);

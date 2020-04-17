@@ -1,9 +1,9 @@
 import React from "react";
 
-function NavigationButton({ buttonAction }) {
+function NavigationButton({ buttonAction, text }) {
   return (
     <button onClick={buttonAction} data-testid={"navigation-button"}>
-      Button
+      {text}
     </button>
   );
 }

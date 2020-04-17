@@ -1,16 +1,15 @@
 import { ClipAdder } from "components/ClipAdder";
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import { ClipPlayer } from "components/ClipPlayer";
+import NavigationButton from "components/NavigationButton/NavigationButton";
 import React, { useEffect } from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { getClips } from "redux/selectors";
 import { fetchClips } from "redux/clips/clipsThunks";
+import { clipIndexChanged } from "redux/clips/clipsSlice";
 
 const App = () => {
-  window.totalNumberOfRenders++;
-  console.log(`App rendered`);
-
   const dispatch = useDispatch();
   const clips = useSelector(getClips);
 
@@ -28,7 +27,10 @@ const App = () => {
       <main>
         <ClipPlayer />
         <ClipAdder />
-        {clips.length > 0 ? <ClipEditForm /> : null}
+        <div>
+          {clips.length > 0 ? <ClipEditForm /> : null}
+          <NavigationButton buttonAction={() => {}} text={"Next"} />
+        </div>
       </main>
     </div>
   );

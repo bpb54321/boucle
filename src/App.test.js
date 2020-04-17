@@ -1,12 +1,16 @@
 import React from "react";
 import App from "App.js";
+import { clipChanged } from "redux/clip/clipSlice";
+import { clipIndexChanged } from "redux/clips/clipsSlice";
 import { renderWithRedux } from "renderWithRedux";
 import userEvent from "@testing-library/user-event";
 import { waitFor } from "@testing-library/dom";
 import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
 import clipService from "redux/clip/clipService";
+import { advanceToNextClip } from "App";
 
 jest.mock("redux/clip/clipService");
+jest.mock("redux/clips/clipsSlice");
 
 describe("App", () => {
   beforeEach(() => {
@@ -131,5 +135,27 @@ describe("App", () => {
         defaultNewClipTranscription
       );
     });
+  });
+
+  test("when user presses forward button, he should be taken to the next clip", async () => {
+    // Arrange
+    const numberOfExistingClips = 2;
+    const clips = fakeClipsBuilder(numberOfExistingClips);
+    clipService.getClips.mockResolvedValue(clips);
+
+    // Act
+    const { findByTestId, getByTestId, findByText } = renderWithRedux(<App />);
+    const nextButton = await findByText("Next");
+
+    userEvent.click(nextButton);
+
+    const clipStartTimeInput = getByTestId("loop-start-time");
+    const clipEndTimeInput = getByTestId("loop-end-time");
+    const clipTranscriptionInput = getByTestId("transcription-input");
+
+    // Assert
+    expect(clipStartTimeInput).toHaveValue(clips[1].startTime);
+    expect(clipEndTimeInput).toHaveValue(clips[1].endTime);
+    expect(clipTranscriptionInput).toHaveValue(clips[1].transcription);
   });
 });

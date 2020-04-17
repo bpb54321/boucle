@@ -3,9 +3,6 @@ import { useSelector } from "react-redux";
 import { getClip } from "redux/selectors";
 
 export const ClipPlayer = () => {
-  window.totalNumberOfRenders++;
-  console.log(`ClipPlayer rendered`);
-
   const clip = useSelector(getClip);
   const loopDuration = clip.endTime - clip.startTime;
   const pauseTimeBetweenLoops = loopDuration;
