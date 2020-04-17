@@ -5,13 +5,14 @@ import NavigationButton from "components/NavigationButton/NavigationButton";
 import React, { useEffect } from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
-import { getClips } from "redux/selectors";
+import { getClips, getCurrentClipIndex } from "redux/selectors";
 import { fetchClips } from "redux/clips/clipsThunks";
-import { clipIndexChanged } from "redux/clips/clipsSlice";
+import { advanceToNextClip } from "clipNavigation";
 
 const App = () => {
   const dispatch = useDispatch();
   const clips = useSelector(getClips);
+  const currentClipIndex = useSelector(getCurrentClipIndex);
 
   useEffect(() => {
     window.lastAction = "clips fetched";
@@ -29,7 +30,12 @@ const App = () => {
         <ClipAdder />
         <div>
           {clips.length > 0 ? <ClipEditForm /> : null}
-          <NavigationButton buttonAction={() => {}} text={"Next"} />
+          <NavigationButton
+            buttonAction={() => {
+              advanceToNextClip(dispatch, currentClipIndex, clips);
+            }}
+            text={"Next"}
+          />
         </div>
       </main>
     </div>

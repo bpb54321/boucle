@@ -7,10 +7,8 @@ import userEvent from "@testing-library/user-event";
 import { waitFor } from "@testing-library/dom";
 import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
 import clipService from "redux/clip/clipService";
-import { advanceToNextClip } from "App";
 
 jest.mock("redux/clip/clipService");
-jest.mock("redux/clips/clipsSlice");
 
 describe("App", () => {
   beforeEach(() => {
@@ -144,17 +142,24 @@ describe("App", () => {
     clipService.getClips.mockResolvedValue(clips);
 
     // Act
-    const { findByTestId, getByTestId, findByText } = renderWithRedux(<App />);
-    const nextButton = await findByText("Next");
+    const { findByTestId, findByText } = renderWithRedux(<App />);
 
+    const clipStartTimeInput = await findByTestId("loop-start-time");
+    const clipEndTimeInput = await findByTestId("loop-end-time");
+    const clipTranscriptionInput = await findByTestId("transcription-input");
+
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[0].startTime)
+    );
+
+    const nextButton = await findByText("Next");
     userEvent.click(nextButton);
 
-    const clipStartTimeInput = getByTestId("loop-start-time");
-    const clipEndTimeInput = getByTestId("loop-end-time");
-    const clipTranscriptionInput = getByTestId("transcription-input");
-
     // Assert
-    expect(clipStartTimeInput).toHaveValue(clips[1].startTime);
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[1].startTime)
+    );
+
     expect(clipEndTimeInput).toHaveValue(clips[1].endTime);
     expect(clipTranscriptionInput).toHaveValue(clips[1].transcription);
   });
