@@ -19,15 +19,12 @@ describe("ClipEditForm", () => {
     jest.resetAllMocks();
     useDispatch.mockReturnValue(dispatch);
     useSelector.mockImplementation(selector => selector());
-    getClip.mockName("getClip");
+    const clip = fakeClipBuilder();
+    getClip.mockName("getClip").mockReturnValue(clip);
     clipChanged.mockName("clipChanged").mockReturnValue(clipChangedReturnValue);
   });
 
   test("should display clip properties of the clip passed to it", async () => {
-    // Arrange
-    const clip = fakeClipBuilder();
-    getClip.mockReturnValue(clip);
-
     // Act
     const { getByTestId } = render(<ClipEditForm />);
     const transcriptionInput = getByTestId("transcription-input");
