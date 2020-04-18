@@ -1,19 +1,25 @@
 import React from "react";
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import { clipChanged } from "redux/clip/clipSlice";
+import { clipUpdated } from "redux/clips/clipsSlice";
 import { fakeClipBuilder } from "redux/clip/fakeBuilders";
 import userEvent from "@testing-library/user-event";
 import { render } from "@testing-library/react";
 import { useSelector, useDispatch } from "react-redux";
-import { getClip } from "redux/selectors";
+import { getClip, getCurrentClipIndex } from "redux/selectors";
+import { dispatchClipOrMarkInvalid } from "components/ClipEditForm/functions";
 
 jest.mock("react-redux");
 jest.mock("redux/selectors");
 jest.mock("redux/clip/clipSlice");
+jest.mock("redux/clips/clipsSlice");
+jest.mock("components/ClipEditForm/functions");
 
 let dispatch = jest.fn();
 let clipChangedReturnValue = Symbol("clip changed return value");
+let clipUpdatedReturnValue = Symbol("clip updated return value");
 let clip;
+const currentClipIndex = 2;
 
 describe("ClipEditForm", () => {
   beforeEach(() => {
@@ -22,7 +28,12 @@ describe("ClipEditForm", () => {
     useSelector.mockImplementation(selector => selector());
     clip = fakeClipBuilder();
     getClip.mockName("getClip").mockReturnValue(clip);
+    getCurrentClipIndex
+      .mockName("getCurrentClipIndex")
+      .mockReturnValue(currentClipIndex);
     clipChanged.mockName("clipChanged").mockReturnValue(clipChangedReturnValue);
+    clipUpdated.mockName("clipUpdated").mockReturnValue(clipUpdatedReturnValue);
+    dispatchClipOrMarkInvalid.mockName("dispatchClipOrMarkInvalid");
   });
 
   test("should display clip properties of the clip passed to it", async () => {
@@ -105,6 +116,32 @@ describe("ClipEditForm", () => {
       startTime: newStartTime
     });
     expect(dispatch).toHaveBeenCalledWith(clipChangedReturnValue);
+  });
+
+  test("should call dispatchClipOrMarkInvalid when user changes start time", async () => {
+    // Act
+    const { getByTestId } = render(<ClipEditForm />);
+
+    const startTimeInput = getByTestId("loop-start-time");
+
+    const newStartTime = clip.startTime + 1;
+
+    // Act
+    await userEvent.type(startTimeInput, newStartTime, {
+      allAtOnce: true
+    });
+
+    // Assert
+    expect(dispatchClipOrMarkInvalid).toHaveBeenCalledWith(
+      {
+        ...clip,
+        startTime: newStartTime
+      },
+      currentClipIndex,
+      expect.any(Function),
+      expect.any(Function),
+      expect.any(Function)
+    );
   });
 
   test("should dispatch changed clip end time when user changes end time", async () => {

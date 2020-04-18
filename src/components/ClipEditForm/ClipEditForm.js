@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
-import { getClip } from "redux/selectors";
+import { getClip, getCurrentClipIndex } from "redux/selectors";
+import {
+  dispatchClipOrMarkInvalid,
+} from "components/ClipEditForm/functions";
 
 function processNumberInput(value) {
   if (isNaN(parseInt(value))) {
@@ -10,29 +13,14 @@ function processNumberInput(value) {
     return parseInt(value);
   }
 }
-function isClipValid(clip) {
-  if (clip.startTime === "" || clip.endTime === "") {
-    return false;
-  } else {
-    return true;
-  }
-}
+
 
 export const ClipEditForm = () => {
   const dispatch = useDispatch();
   const clip = useSelector(getClip);
+  const currentClipIndex = useSelector(getCurrentClipIndex);
   const [localClipState, setLocalClipState] = useState(clip);
   const [startTimeIsValid, setStartTimeIsValid] = useState(true);
-
-  function dispatchClipOrMarkInvalid(clip, setInputIsValid) {
-    if (isClipValid(clip)) {
-      setInputIsValid(true);
-      dispatch(clipChanged(clip));
-    } else {
-      setLocalClipState(clip);
-      setInputIsValid(false);
-    }
-  }
 
   useEffect(() => {
     setLocalClipState(clip);
@@ -56,7 +44,13 @@ export const ClipEditForm = () => {
             ...localClipState,
             startTime: processNumberInput(event.target.value)
           };
-          dispatchClipOrMarkInvalid(updatedClip, setStartTimeIsValid);
+          dispatchClipOrMarkInvalid(
+            updatedClip,
+            currentClipIndex,
+            setStartTimeIsValid,
+            setLocalClipState,
+            dispatch
+          );
         }}
       />
       {startTimeIsValid ? null : (

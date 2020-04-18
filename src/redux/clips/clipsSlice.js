@@ -16,10 +16,18 @@ const clipsSlice = createSlice({
     },
     clipIndexChanged: (state, action) => {
       state.currentClipIndex = action.payload;
+    },
+    clipUpdated: (state, action) => {
+      state.clips[action.payload.clipIndexToUpdate] = action.payload.clip;
     }
   }
 });
 
 export const clipsReducer = clipsSlice.reducer;
 
-export const { clipAdded, clipsFetched, clipIndexChanged } = clipsSlice.actions;
+export const {
+  clipAdded,
+  clipsFetched,
+  clipIndexChanged,
+  clipUpdated
+} = clipsSlice.actions;

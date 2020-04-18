@@ -165,7 +165,6 @@ describe("App", () => {
   });
 
   test("when user presses back button, he should be taken to the previous clip", async () => {
-    jest.setTimeout(60000000);
     // Arrange
     const numberOfExistingClips = 2;
     const clips = fakeClipsBuilder(numberOfExistingClips);
@@ -205,6 +204,49 @@ describe("App", () => {
     });
     await waitFor(() => {
       expect(clipTranscriptionInput).toHaveValue(clips[0].transcription);
+    });
+  });
+
+  test("when user edits clip, clip change is persisted in state", async () => {
+    // Arrange
+    const numberOfExistingClips = 2;
+    const clips = fakeClipsBuilder(numberOfExistingClips);
+    clipService.getClips.mockResolvedValue(clips);
+
+    // Act
+    const { findByTestId, findByText } = renderWithRedux(<App />);
+
+    const clipStartTimeInput = await findByTestId("loop-start-time");
+    const clipEndTimeInput = await findByTestId("loop-end-time");
+    const clipTranscriptionInput = await findByTestId("transcription-input");
+
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[0].startTime)
+    );
+
+    const newFirstClipStartTime = clips[0].startTime + 1;
+    const newFirstClipEndTime = clips[0].endTime + 1;
+    const newFirstClipTranscription = clips[0].transcription + "!";
+
+    await userEvent.type(clipStartTimeInput, String(newFirstClipStartTime));
+    await userEvent.type(clipEndTimeInput, String(newFirstClipEndTime));
+    await userEvent.type(clipTranscriptionInput, newFirstClipTranscription);
+
+    const nextButton = await findByText("Next");
+    userEvent.click(nextButton);
+
+    const previousButton = await findByText("Previous");
+    userEvent.click(previousButton);
+
+    // Assert
+    await waitFor(() => {
+      expect(clipStartTimeInput).toHaveValue(newFirstClipStartTime);
+    });
+    await waitFor(() =>
+      expect(clipEndTimeInput).toHaveValue(newFirstClipEndTime)
+    );
+    await waitFor(() => {
+      expect(clipTranscriptionInput).toHaveValue(newFirstClipTranscription);
     });
   });
 });
