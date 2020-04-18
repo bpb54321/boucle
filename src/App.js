@@ -7,7 +7,7 @@ import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { getClips, getCurrentClipIndex } from "redux/selectors";
 import { fetchClips } from "redux/clips/clipsThunks";
-import { advanceToNextClip } from "clipNavigation";
+import { changeClip } from "clipNavigation";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -29,10 +29,16 @@ const App = () => {
         <ClipPlayer />
         <ClipAdder />
         <div>
+          <NavigationButton
+              buttonAction={() => {
+                changeClip("backward", currentClipIndex, clips, dispatch);
+              }}
+              text={"Previous"}
+          />
           {clips.length > 0 ? <ClipEditForm /> : null}
           <NavigationButton
             buttonAction={() => {
-              advanceToNextClip(dispatch, currentClipIndex, clips);
+              changeClip("forward", currentClipIndex, clips, dispatch);
             }}
             text={"Next"}
           />

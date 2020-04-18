@@ -13,13 +13,14 @@ jest.mock("redux/clip/clipSlice");
 
 let dispatch = jest.fn();
 let clipChangedReturnValue = Symbol("clip changed return value");
+let clip;
 
 describe("ClipEditForm", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     useDispatch.mockReturnValue(dispatch);
     useSelector.mockImplementation(selector => selector());
-    const clip = fakeClipBuilder();
+    clip = fakeClipBuilder();
     getClip.mockName("getClip").mockReturnValue(clip);
     clipChanged.mockName("clipChanged").mockReturnValue(clipChangedReturnValue);
   });

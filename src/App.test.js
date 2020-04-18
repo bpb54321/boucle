@@ -163,4 +163,48 @@ describe("App", () => {
     expect(clipEndTimeInput).toHaveValue(clips[1].endTime);
     expect(clipTranscriptionInput).toHaveValue(clips[1].transcription);
   });
+
+  test("when user presses back button, he should be taken to the previous clip", async () => {
+    jest.setTimeout(60000000);
+    // Arrange
+    const numberOfExistingClips = 2;
+    const clips = fakeClipsBuilder(numberOfExistingClips);
+    clipService.getClips.mockResolvedValue(clips);
+
+    // Act
+    const { findByTestId, findByText } = renderWithRedux(<App />);
+
+    const clipStartTimeInput = await findByTestId("loop-start-time");
+    const clipEndTimeInput = await findByTestId("loop-end-time");
+    const clipTranscriptionInput = await findByTestId("transcription-input");
+
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[0].startTime)
+    );
+
+    const nextButton = await findByText("Next");
+    userEvent.click(nextButton);
+
+    // Assert
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[1].startTime)
+    );
+    await waitFor(() => expect(clipEndTimeInput).toHaveValue(clips[1].endTime));
+    await waitFor(() => {
+      expect(clipTranscriptionInput).toHaveValue(clips[1].transcription);
+    });
+
+    const previousButton = await findByText("Previous");
+    userEvent.click(previousButton);
+
+    await waitFor(() =>
+      expect(clipStartTimeInput).toHaveValue(clips[0].startTime)
+    );
+    await waitFor(() => {
+      expect(clipEndTimeInput).toHaveValue(clips[0].endTime);
+    });
+    await waitFor(() => {
+      expect(clipTranscriptionInput).toHaveValue(clips[0].transcription);
+    });
+  });
 });
