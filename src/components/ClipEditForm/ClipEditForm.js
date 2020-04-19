@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
 import { getClip, getCurrentClipIndex } from "redux/selectors";
-import {
-  dispatchClipOrMarkInvalid,
-} from "components/ClipEditForm/functions";
+import { updateClip } from "components/ClipEditForm/updateClip";
+import {isEndTimeValid, isStartTimeValid} from "components/ClipEditForm/validation";
 
 function processNumberInput(value) {
   if (isNaN(parseInt(value))) {
@@ -14,13 +13,14 @@ function processNumberInput(value) {
   }
 }
 
-
 export const ClipEditForm = () => {
   const dispatch = useDispatch();
   const clip = useSelector(getClip);
   const currentClipIndex = useSelector(getCurrentClipIndex);
   const [localClipState, setLocalClipState] = useState(clip);
   const [startTimeIsValid, setStartTimeIsValid] = useState(true);
+  const [endTimeIsValid, setEndTimeIsValid] = useState(true);
+  const [transcriptionIsValid, setTranscriptionIsValid] = useState(true);
 
   useEffect(() => {
     setLocalClipState(clip);
@@ -44,13 +44,13 @@ export const ClipEditForm = () => {
             ...localClipState,
             startTime: processNumberInput(event.target.value)
           };
-          dispatchClipOrMarkInvalid(
-            updatedClip,
-            currentClipIndex,
-            setStartTimeIsValid,
-            setLocalClipState,
-            dispatch
-          );
+          setLocalClipState(updatedClip);
+          if (isStartTimeValid(event.target.value)) {
+            setStartTimeIsValid(true);
+            updateClip(updatedClip, currentClipIndex, dispatch);
+          } else {
+            setStartTimeIsValid(false);
+          }
         }}
       />
       {startTimeIsValid ? null : (
@@ -67,13 +67,12 @@ export const ClipEditForm = () => {
         onChange={event => {
           const updatedClip = {
             ...localClipState,
-            endTime: parseInt(event.target.value)
+            endTime: processNumberInput(event.target.value)
           };
-          dispatch(clipChanged(updatedClip));
-          // setLocalClipState({
-          //   ...localClipState,
-          //   endTime: parseInt(event.target.value)
-          // });
+          setLocalClipState(updatedClip);
+          if (isEndTimeValid(event.target.value)) {
+            updateClip(updatedClip, currentClipIndex, dispatch);
+          }
         }}
       />
       <div>
@@ -86,11 +85,8 @@ export const ClipEditForm = () => {
               ...clip,
               transcription: event.target.value
             };
-            dispatch(clipChanged(updatedClip));
-            // setLocalClipState({
-            //   ...localClipState,
-            //   transcription: event.target.value
-            // });
+            setLocalClipState(updatedClip);
+            updateClip(updatedClip, currentClipIndex, dispatch);
           }}
           value={localClipState.transcription}
         />
