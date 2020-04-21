@@ -12,5 +12,8 @@ export default {
     const response = await axios.get(`${apiBaseUrl}/clips/${id}`);
     const { data: clip } = response;
     return clip;
+  },
+  updateClip: async clip => {
+    await axios.put(`${apiBaseUrl}/clips/${clip.id}`, clip);
   }
 };

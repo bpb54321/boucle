@@ -57,4 +57,20 @@ describe("clipService", () => {
       expect(gotClip).toStrictEqual(fakeClip);
     });
   });
+
+  describe("updateClip", () => {
+    test("should call axios PUT at the appropriate url with appropriate body", async () => {
+      // Arrange
+      const clip = fakeClipBuilder();
+
+      // Act
+      await clipService.updateClip(clip);
+
+      // Assert
+      expect(axios.put).toHaveBeenCalledWith(
+        `${apiBaseUrl}/clips/${clip.id}`,
+        clip
+      );
+    });
+  });
 });
