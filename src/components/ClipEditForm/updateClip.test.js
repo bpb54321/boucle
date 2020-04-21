@@ -22,7 +22,7 @@ describe("updateClip", function() {
   });
   test("dispatches clipChanged action with the clip passed in", async () => {
     // Act
-    updateClip(clip, clipIndexToUpdate, dispatch);
+    await updateClip(clip, clipIndexToUpdate)(dispatch);
 
     // Assert
     expect(clipChanged).toHaveBeenCalledWith(clip);
@@ -30,7 +30,7 @@ describe("updateClip", function() {
   });
   test("dispatches clipUpdated with the clip and index passed in", async () => {
     // Act
-    updateClip(clip, clipIndexToUpdate, dispatch);
+    await updateClip(clip, clipIndexToUpdate)(dispatch);
 
     // Assert
     expect(clipUpdated).toHaveBeenCalledWith({ clip, clipIndexToUpdate });
