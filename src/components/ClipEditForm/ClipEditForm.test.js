@@ -19,12 +19,14 @@ jest.mock("components/ClipEditForm/updateClip");
 let dispatch = jest.fn();
 let clipChangedReturnValue = Symbol("clip changed return value");
 let clipUpdatedReturnValue = Symbol("clip updated return value");
+let updateClipReturnValue = Symbol("update clip return value");
 let clip;
 const currentClipIndex = 2;
 
 describe("ClipEditForm", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    dispatch.mockName("dispatch");
     useDispatch.mockReturnValue(dispatch);
     useSelector.mockImplementation(selector => selector());
     clip = fakeClipBuilder();
@@ -34,7 +36,7 @@ describe("ClipEditForm", () => {
       .mockReturnValue(currentClipIndex);
     clipChanged.mockName("clipChanged").mockReturnValue(clipChangedReturnValue);
     clipUpdated.mockName("clipUpdated").mockReturnValue(clipUpdatedReturnValue);
-    updateClip.mockName("dispatchClipOrMarkInvalid");
+    updateClip.mockName("updateClip").mockReturnValue(updateClipReturnValue);
   });
 
   test("should display clip properties of the clip passed to it", async () => {
@@ -94,7 +96,7 @@ describe("ClipEditForm", () => {
     });
   });
 
-  describe("updateClip should be called appropriately", () => {
+  describe("updateClip should be dispatched appropriately", () => {
     each([
       ["loop-start-time", "startTime"],
       ["loop-end-time", "endTime"],
@@ -123,9 +125,9 @@ describe("ClipEditForm", () => {
           ...clip,
           [clipProperty]: newInputValue
         },
-        currentClipIndex,
-        dispatch
+        currentClipIndex
       );
+      expect(dispatch).toHaveBeenCalledWith(updateClipReturnValue);
     });
   });
 });

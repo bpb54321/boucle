@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { clipChanged } from "redux/clip/clipSlice";
 import { getClip, getCurrentClipIndex } from "redux/selectors";
 import { updateClip } from "components/ClipEditForm/updateClip";
-import {isEndTimeValid, isStartTimeValid} from "components/ClipEditForm/validation";
+import {
+  isEndTimeValid,
+  isStartTimeValid
+} from "components/ClipEditForm/validation";
 
 function processNumberInput(value) {
   if (isNaN(parseInt(value))) {
@@ -47,7 +50,7 @@ export const ClipEditForm = () => {
           setLocalClipState(updatedClip);
           if (isStartTimeValid(event.target.value)) {
             setStartTimeIsValid(true);
-            updateClip(updatedClip, currentClipIndex, dispatch);
+            dispatch(updateClip(updatedClip, currentClipIndex));
           } else {
             setStartTimeIsValid(false);
           }
@@ -71,7 +74,7 @@ export const ClipEditForm = () => {
           };
           setLocalClipState(updatedClip);
           if (isEndTimeValid(event.target.value)) {
-            updateClip(updatedClip, currentClipIndex, dispatch);
+            dispatch(updateClip(updatedClip, currentClipIndex));
           }
         }}
       />
@@ -86,7 +89,7 @@ export const ClipEditForm = () => {
               transcription: event.target.value
             };
             setLocalClipState(updatedClip);
-            updateClip(updatedClip, currentClipIndex, dispatch);
+            dispatch(updateClip(updatedClip, currentClipIndex));
           }}
           value={localClipState.transcription}
         />

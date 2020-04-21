@@ -1,10 +1,12 @@
 import { updateClip } from "components/ClipEditForm/updateClip";
+import clipService from "../../redux/clip/clipService";
 import { fakeClipBuilder } from "../../redux/clip/fakeBuilders";
 import { clipChanged } from "../../redux/clip/clipSlice";
 import { clipUpdated } from "../../redux/clips/clipsSlice";
 
 jest.mock("../../redux/clip/clipSlice");
 jest.mock("../../redux/clips/clipsSlice");
+jest.mock("../../redux/clip/clipService");
 
 describe("updateClip", function() {
   let clip;
@@ -35,5 +37,12 @@ describe("updateClip", function() {
     // Assert
     expect(clipUpdated).toHaveBeenCalledWith({ clip, clipIndexToUpdate });
     expect(dispatch).toHaveBeenCalledWith(clipUpdatedReturnValue);
+  });
+  test("calls clipService.updateClip with the clip to update", async () => {
+    // Act
+    await updateClip(clip, clipIndexToUpdate)(dispatch);
+
+    // Assert
+    expect(clipService.updateClip).toHaveBeenCalledWith(clip);
   });
 });
