@@ -44,7 +44,7 @@ export const ClipPlayer = () => {
         ref={audioPlayerRef}
         data-testid={"audio-player"}
         controls
-        src="infoman.mp4"
+        src="lecon_1_dialogue_0.mp3"
         onTimeUpdate={onTimeUpdate}
       >
         Your browser does not support the

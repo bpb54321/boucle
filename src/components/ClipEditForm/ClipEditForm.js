@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clipChanged } from "redux/clip/clipSlice";
 import { getClip, getCurrentClipIndex } from "redux/selectors";
 import { updateClip } from "components/ClipEditForm/updateClip";
 import {
   isEndTimeValid,
-  isStartTimeValid
+  isStartTimeValid,
 } from "components/ClipEditForm/validation";
 
 function processNumberInput(value) {
@@ -22,8 +21,6 @@ export const ClipEditForm = () => {
   const currentClipIndex = useSelector(getCurrentClipIndex);
   const [localClipState, setLocalClipState] = useState(clip);
   const [startTimeIsValid, setStartTimeIsValid] = useState(true);
-  const [endTimeIsValid, setEndTimeIsValid] = useState(true);
-  const [transcriptionIsValid, setTranscriptionIsValid] = useState(true);
 
   useEffect(() => {
     setLocalClipState(clip);
@@ -32,7 +29,7 @@ export const ClipEditForm = () => {
   return (
     <form
       data-testid={"clip-edit-form"}
-      onSubmit={event => {
+      onSubmit={(event) => {
         event.preventDefault();
       }}
     >
@@ -42,10 +39,10 @@ export const ClipEditForm = () => {
         id="loop-start-time"
         type="number"
         value={localClipState.startTime}
-        onChange={event => {
+        onChange={(event) => {
           const updatedClip = {
             ...localClipState,
-            startTime: processNumberInput(event.target.value)
+            startTime: processNumberInput(event.target.value),
           };
           setLocalClipState(updatedClip);
           if (isStartTimeValid(event.target.value)) {
@@ -67,10 +64,10 @@ export const ClipEditForm = () => {
         id="loop-end-time"
         type="number"
         value={localClipState.endTime}
-        onChange={event => {
+        onChange={(event) => {
           const updatedClip = {
             ...localClipState,
-            endTime: processNumberInput(event.target.value)
+            endTime: processNumberInput(event.target.value),
           };
           setLocalClipState(updatedClip);
           if (isEndTimeValid(event.target.value)) {
@@ -83,10 +80,10 @@ export const ClipEditForm = () => {
           className={"App__textarea"}
           data-testid="transcription-input"
           type="textarea"
-          onChange={event => {
+          onChange={(event) => {
             const updatedClip = {
               ...clip,
-              transcription: event.target.value
+              transcription: event.target.value,
             };
             setLocalClipState(updatedClip);
             dispatch(updateClip(updatedClip, currentClipIndex));
