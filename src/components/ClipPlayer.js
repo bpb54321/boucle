@@ -44,7 +44,7 @@ export const ClipPlayer = () => {
         ref={audioPlayerRef}
         data-testid={"audio-player"}
         controls
-        src="lecon_1_dialogue_0.mp3"
+        src="https://www.japprendslequebecois.com/sites/default/files/mp3/lecon_4_dialogue.mp3"
         onTimeUpdate={onTimeUpdate}
       >
         Your browser does not support the
