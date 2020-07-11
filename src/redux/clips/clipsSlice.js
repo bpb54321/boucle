@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
 
 const clipsSlice = createSlice({
   name: "clipsSlice",
@@ -26,8 +26,9 @@ const clipsSlice = createSlice({
 export const clipsReducer = clipsSlice.reducer;
 
 export const {
-  clipAdded,
   clipsFetched,
   clipIndexChanged,
   clipUpdated
 } = clipsSlice.actions;
+
+export const clipAdded = createAction("clip/added");
