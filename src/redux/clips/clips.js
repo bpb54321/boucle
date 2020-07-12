@@ -1,25 +1,17 @@
 import { createReducer } from "@reduxjs/toolkit";
 import last from "lodash/last";
-
 import { clipAdded } from "../actions";
+import createDefaultFirstClip from "./createDefaultFirstClip";
+import createNewClipFromPreviousClip from "./createNewClipFromPreviousClip";
 
 const clips = createReducer([], {
   [clipAdded]: state => {
     if (state.length > 0) {
-      const lastClip = last(state);
-      const newClip = {
-        startTime: lastClip.endTime,
-        endTime: lastClip.endTime + 3,
-        transcription: ""
-      };
+      const previousClip = last(state);
+      const newClip = createNewClipFromPreviousClip(previousClip);
       state.push(newClip);
     } else {
-      const defaultFirstClip = {
-        startTime: 0,
-        endTime: 5,
-        transcription: ""
-      };
-      state.push(defaultFirstClip);
+      state.push(createDefaultFirstClip);
     }
   }
 });
