@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { waitFor } from "@testing-library/dom";
 import fakeClipsBuilder from "redux/clips/fakeClipsBuilder";
 import clipService from "redux/clip/clipService";
+import { DEFAULT_CLIP_DURATION } from "./constants";
 
 jest.mock("redux/clip/clipService");
 
@@ -15,75 +16,46 @@ describe("App", () => {
   });
 
   test("should not display a clip edit form if no clips have yet been created for the media document", async () => {
-    // Arrange
-    const emptyClipArray = [];
-    clipService.getClips.mockResolvedValue(emptyClipArray);
-
     // Act
-    const { queryByTestId, getByTestId } = renderWithRedux(<App />);
-
-    // Wait for the app to finish rerendering
-    await waitFor(() => {
-      expect(getByTestId("app")).toHaveAttribute(
-        "data-last-action",
-        "clips fetched"
-      );
-    });
+    const { queryByTestId } = renderWithRedux(<App />);
 
     // Assert
-    const clipStartTimeInput = queryByTestId("loop-start-time");
+    const clipStartTimeInput = queryByTestId("clip-edit-form");
     expect(clipStartTimeInput).not.toBeInTheDocument();
   });
 
-  test("should display the first clip of the media document when the app is loaded if there is at least one clip", async () => {
-    // Arrange
-    const numberClips = 1;
-    const clips = fakeClipsBuilder(numberClips);
+  test(
+    "given there are no existing clips, when user clicks the New Clip button, should display an edit form " +
+      "for a new clip",
+    async () => {
+      // Arrange
+      const emptyClipArray = [];
+      clipService.getClips.mockResolvedValue(emptyClipArray);
 
-    clipService.getClips.mockResolvedValue(clips);
+      // Act
+      const { getByTestId, queryByTestId } = renderWithRedux(<App />);
 
-    // Act
-    const renderResult = renderWithRedux(<App />);
-    const { findByTestId } = renderResult;
-    const clipStartTimeInput = await findByTestId("loop-start-time");
-    const clipEndTimeInput = await findByTestId("loop-end-time");
-    const clipTranscriptionInput = await findByTestId("transcription-input");
+      // Assert
+      expect(queryByTestId("clip-edit-form")).not.toBeInTheDocument();
 
-    // Assert
-    await waitFor(() =>
-      expect(clipStartTimeInput).toHaveValue(clips[0].startTime)
-    );
-    expect(clipEndTimeInput).toHaveValue(clips[0].endTime);
-    expect(clipTranscriptionInput).toHaveValue(clips[0].transcription);
-  });
+      // Act
+      userEvent.click(getByTestId("new-clip-button"));
 
-  test("given there are no existing clips, when user clicks the New Clip button, should display an edit form " +
-    "for a new clip", async () => {
-    // Arrange
-    const emptyClipArray = [];
-    clipService.getClips.mockResolvedValue(emptyClipArray);
-
-    // Act
-    const { getByTestId, queryByTestId } = renderWithRedux(<App />);
-
-    // Assert
-    expect(queryByTestId("clip-edit-form")).not.toBeInTheDocument();
-
-    // Act
-    userEvent.click(getByTestId("new-clip-button"));
-
-    // Assert
-    expect(getByTestId("clip-edit-form")).toBeInTheDocument();
-  });
+      // Assert
+      expect(getByTestId("clip-edit-form")).toBeInTheDocument();
+    }
+  );
 
   test("should set new clip start and end time defaults when the user clicks Add Clip given at least one other clip exists", async () => {
     // Arrange
     const numberOfExistingClips = 1;
     const clips = fakeClipsBuilder(numberOfExistingClips);
-    clipService.getClips.mockResolvedValue(clips);
+    const preloadedState = {
+      clips
+    };
 
     // Act
-    const { getByTestId } = renderWithRedux(<App />);
+    const { getByTestId } = renderWithRedux(<App />, preloadedState);
 
     const firstClipEndTime = clips[0].endTime;
     await waitFor(() => {
@@ -98,9 +70,8 @@ describe("App", () => {
       expect(secondClipStartTimeInput).toHaveValue(firstClipEndTime);
     });
 
-    const defaultClipDuration = 3;
     const expectedSecondClipEndTime =
-      parseInt(secondClipStartTimeInput.value) + defaultClipDuration;
+      parseInt(secondClipStartTimeInput.value) + DEFAULT_CLIP_DURATION;
 
     expect(getByTestId("loop-end-time")).toHaveValue(expectedSecondClipEndTime);
   });

@@ -15,15 +15,9 @@ const App = () => {
   const clips = useSelector(getClips);
   const currentClipIndex = useSelector(getCurrentClipIndex);
 
-  useEffect(() => {
-    window.lastAction = "clips fetched";
-    dispatch(fetchClips());
-  }, [dispatch]);
-
   return (
     <div
       className="App"
-      data-last-action={window.lastAction}
       data-testid={"app"}
     >
       <main>
