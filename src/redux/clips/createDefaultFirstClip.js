@@ -1,11 +1,10 @@
+import clipBuilder from "./clipBuilder";
 
 const createDefaultFirstClip = () => {
-  const defaultFirstClip = {
-    startTime: 0,
-    endTime: 5,
-    transcription: ""
-  }
-  return defaultFirstClip;
+  const startTime = 0;
+  const endTime = 5;
+  const transcription = "";
+  return clipBuilder(startTime, endTime, transcription);
 };
 
 export default createDefaultFirstClip;

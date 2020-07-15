@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { clipAdded } from "../actions";
 import clips from "./clips";
+import createDefaultFirstClip from "./createDefaultFirstClip";
 
 describe("clips", () => {
   test("should return initial state when store initialized", async () => {
@@ -14,11 +15,7 @@ describe("clips", () => {
   });
   test("should be able to add the first clip of a media source", async () => {
     const previousState = [];
-    const firstClip = {
-      startTime: 0,
-      endTime: 5,
-      transcription: ""
-    };
+    const firstClip = createDefaultFirstClip();
     const nextState = [firstClip];
 
     expect(clips(previousState, clipAdded())).toStrictEqual(nextState);

@@ -11,7 +11,7 @@ const clips = createReducer([], {
       const newClip = createNewClipFromPreviousClip(previousClip);
       state.push(newClip);
     } else {
-      state.push(createDefaultFirstClip);
+      state.push(createDefaultFirstClip());
     }
   }
 });
