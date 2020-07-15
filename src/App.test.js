@@ -57,7 +57,8 @@ describe("App", () => {
     expect(clipTranscriptionInput).toHaveValue(clips[0].transcription);
   });
 
-  test("given there are no existing clips, when user clicks the New Clip button, should display an edit form for a new clip", async () => {
+  test("given there are no existing clips, when user clicks the New Clip button, should display an edit form " +
+    "for a new clip", async () => {
     // Arrange
     const emptyClipArray = [];
     clipService.getClips.mockResolvedValue(emptyClipArray);

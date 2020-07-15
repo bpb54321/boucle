@@ -5,7 +5,8 @@ import NavigationButton from "components/NavigationButton/NavigationButton";
 import React, { useEffect } from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
-import { getClips, getCurrentClipIndex } from "redux/selectors";
+import { getCurrentClipIndex } from "redux/selectors";
+import { getClips } from "redux/clips/selectors";
 import { fetchClips } from "redux/clips/clipsThunks";
 import { changeClip } from "clipNavigation";
 
@@ -30,10 +31,10 @@ const App = () => {
         <ClipAdder />
         <div>
           <NavigationButton
-              buttonAction={() => {
-                changeClip("backward", currentClipIndex, clips, dispatch);
-              }}
-              text={"Previous"}
+            buttonAction={() => {
+              changeClip("backward", currentClipIndex, clips, dispatch);
+            }}
+            text={"Previous"}
           />
           {clips.length > 0 ? <ClipEditForm /> : null}
           <NavigationButton
