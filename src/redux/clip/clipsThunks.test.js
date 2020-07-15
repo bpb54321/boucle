@@ -2,7 +2,8 @@ import { clipsFetched, clipAdded } from "redux/clips/clipsSlice";
 import { clipChanged } from "redux/clip/clipSlice";
 import { fetchClips, addClip } from "redux/clips/clipsThunks";
 import clipService from "redux/clip/clipService";
-import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
+import fakeClipBuilder from "redux/clips/fakeClipBuilder";
+import fakeClipsBuilder from "redux/clips/fakeClipsBuilder";
 
 let dispatch = jest.fn();
 

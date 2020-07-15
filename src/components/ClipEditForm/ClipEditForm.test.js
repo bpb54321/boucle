@@ -1,14 +1,14 @@
-import React from "react";
-import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
-import { clipChanged } from "redux/clip/clipSlice";
-import { clipUpdated } from "redux/clips/clipsSlice";
-import { fakeClipBuilder } from "redux/clip/fakeBuilders";
-import userEvent from "@testing-library/user-event";
 import { render } from "@testing-library/react";
-import { useSelector, useDispatch } from "react-redux";
-import { getClip, getCurrentClipIndex } from "redux/selectors";
+import userEvent from "@testing-library/user-event";
+import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import { updateClip } from "components/ClipEditForm/updateClip";
 import each from "jest-each";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { clipChanged } from "redux/clip/clipSlice";
+import { clipUpdated } from "redux/clips/clipsSlice";
+import fakeClipBuilder from "redux/clips/fakeClipBuilder";
+import { getClip, getCurrentClipIndex } from "redux/selectors";
 
 jest.mock("react-redux");
 jest.mock("redux/selectors");

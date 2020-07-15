@@ -1,6 +1,6 @@
 import { updateClip } from "components/ClipEditForm/updateClip";
 import clipService from "../../redux/clip/clipService";
-import { fakeClipBuilder } from "../../redux/clip/fakeBuilders";
+import fakeClipBuilder from "../../redux/clips/fakeClipBuilder";
 import { clipChanged } from "../../redux/clip/clipSlice";
 import { clipUpdated } from "../../redux/clips/clipsSlice";
 

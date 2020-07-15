@@ -1,11 +1,9 @@
 import React from "react";
 import App from "App.js";
-import { clipChanged } from "redux/clip/clipSlice";
-import { clipIndexChanged } from "redux/clips/clipsSlice";
 import { renderWithRedux } from "renderWithRedux";
 import userEvent from "@testing-library/user-event";
 import { waitFor } from "@testing-library/dom";
-import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
+import fakeClipsBuilder from "redux/clips/fakeClipsBuilder";
 import clipService from "redux/clip/clipService";
 
 jest.mock("redux/clip/clipService");

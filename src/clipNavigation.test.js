@@ -1,7 +1,7 @@
 import { changeClip } from "clipNavigation";
 import { clipChanged } from "redux/clip/clipSlice";
 import { clipIndexChanged } from "redux/clips/clipsSlice";
-import { fakeClipsBuilder } from "redux/clip/fakeBuilders";
+import fakeClipsBuilder from "redux/clips/fakeClipsBuilder";
 
 jest.mock("redux/clip/clipSlice");
 jest.mock("redux/clips/clipsSlice");

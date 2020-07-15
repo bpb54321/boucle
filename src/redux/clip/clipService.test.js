@@ -1,6 +1,7 @@
 import clipService from "redux/clip/clipService";
 import axios from "axios";
-import { fakeClipBuilder, fakeClipsBuilder } from "redux/clip/fakeBuilders";
+import fakeClipBuilder from "redux/clips/fakeClipBuilder";
+import fakeClipsBuilder from "redux/clips/fakeClipsBuilder";
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
