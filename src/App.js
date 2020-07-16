@@ -2,12 +2,11 @@ import { ClipAdder } from "components/ClipAdder";
 import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
 import { ClipPlayer } from "components/ClipPlayer";
 import NavigationButton from "components/NavigationButton/NavigationButton";
-import React, { useEffect } from "react";
+import React from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { getCurrentClipIndex } from "redux/selectors";
 import { getClips } from "redux/clips/selectors";
-import { fetchClips } from "redux/clips/clipsThunks";
 import { changeClip } from "clipNavigation";
 
 const App = () => {
@@ -16,10 +15,7 @@ const App = () => {
   const currentClipIndex = useSelector(getCurrentClipIndex);
 
   return (
-    <div
-      className="App"
-      data-testid={"app"}
-    >
+    <div className="App" data-testid={"app"}>
       <main>
         <ClipPlayer />
         <ClipAdder />
