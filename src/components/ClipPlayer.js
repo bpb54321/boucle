@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { getClip } from "redux/selectors";
+import { getClips, getCurrentClipIndex } from "../redux/selectors";
 
 export const ClipPlayer = () => {
-  const clip = useSelector(getClip);
+  const clips = useSelector(getClips);
+  const currentClipIndex = useSelector(getCurrentClipIndex);
+  const clip = clips[currentClipIndex];
   const loopDuration = clip.endTime - clip.startTime;
   const pauseTimeBetweenLoops = loopDuration;
 

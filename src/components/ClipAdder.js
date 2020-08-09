@@ -1,8 +1,6 @@
-import { clipDefaultDuration } from "constants.js";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { clipAdded } from "../redux/actions";
-import { useSelector, useDispatch } from "react-redux";
-import { getClip, getClips } from "redux/selectors";
 
 export const ClipAdder = () => {
   const dispatch = useDispatch();

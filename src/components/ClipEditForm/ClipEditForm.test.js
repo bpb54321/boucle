@@ -1,133 +1,100 @@
-import { render } from "@testing-library/react";
+import {screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ClipEditForm } from "components/ClipEditForm/ClipEditForm";
-import { updateClip } from "components/ClipEditForm/updateClip";
-import each from "jest-each";
+import {ClipEditForm} from "components/ClipEditForm/ClipEditForm";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { clipChanged } from "redux/clip/clipSlice";
-import { clipUpdated } from "redux/clips/clipsSlice";
-import fakeClipBuilder from "redux/clips/fakeClipBuilder";
-import { getClip, getCurrentClipIndex } from "redux/selectors";
+import clipBuilder from "../../redux/clips/clipBuilder";
+import {renderWithRedux} from "../../renderWithRedux";
 
-jest.mock("react-redux");
-jest.mock("redux/selectors");
-jest.mock("redux/clip/clipSlice");
-jest.mock("redux/clips/clipsSlice");
-jest.mock("components/ClipEditForm/updateClip");
-
-let dispatch = jest.fn();
-let clipChangedReturnValue = Symbol("clip changed return value");
-let clipUpdatedReturnValue = Symbol("clip updated return value");
-let updateClipReturnValue = Symbol("update clip return value");
 let clip;
-const currentClipIndex = 2;
+let clips;
+let preloadedState;
 
 describe("ClipEditForm", () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    dispatch.mockName("dispatch");
-    useDispatch.mockReturnValue(dispatch);
-    useSelector.mockImplementation(selector => selector());
-    clip = fakeClipBuilder();
-    getClip.mockName("getClip").mockReturnValue(clip);
-    getCurrentClipIndex
-      .mockName("getCurrentClipIndex")
-      .mockReturnValue(currentClipIndex);
-    clipChanged.mockName("clipChanged").mockReturnValue(clipChangedReturnValue);
-    clipUpdated.mockName("clipUpdated").mockReturnValue(clipUpdatedReturnValue);
-    updateClip.mockName("updateClip").mockReturnValue(updateClipReturnValue);
+
+    clips = [clipBuilder(3, 5, "The transcription of the clip")];
+    clip = clips[0];
+    preloadedState = {
+      clips,
+      currentClipIndex: 0
+    };
   });
 
   test("should display clip properties of the clip passed to it", async () => {
-    // Act
-    const { getByTestId } = render(<ClipEditForm />);
+    const { getByTestId } = renderWithRedux(<ClipEditForm />, preloadedState);
+
     const transcriptionInput = getByTestId("transcription-input");
     const startTimeInput = getByTestId("loop-start-time");
     const endTimeInput = getByTestId("loop-end-time");
 
-    // Assert
     expect(transcriptionInput).toHaveValue(clip.transcription);
     expect(startTimeInput).toHaveValue(clip.startTime);
     expect(endTimeInput).toHaveValue(clip.endTime);
   });
 
-  describe("When user enters an empty string in start time input", () => {
-    let startTimeInput;
-    let getByTestId;
-    let queryByTestId;
+  test(
+    "Input should display user's invalid input and error message should be displayed " +
+      "when user enters an empty string in start time input, ",
+    async () => {
+      renderWithRedux(<ClipEditForm />, preloadedState);
 
-    beforeEach(async () => {
-      // Arrange
-      const oldClip = fakeClipBuilder();
-      getClip.mockReturnValue(oldClip);
-
-      // Act
-      const renderResult = render(<ClipEditForm />);
-      ({ getByTestId, queryByTestId } = renderResult);
-
-      startTimeInput = getByTestId("loop-start-time");
-      const startTimeInvalidInputMessage = queryByTestId(
+      const startTimeInput = screen.getByTestId("loop-start-time");
+      let startTimeInvalidInputMessage = screen.queryByTestId(
         "start-time-invalid-input"
       );
 
-      // Assert
       expect(startTimeInvalidInputMessage).not.toBeInTheDocument();
 
-      // Act
       await userEvent.type(startTimeInput, "", {
         allAtOnce: true
       });
-    });
 
-    test("input should display users invalid input", async () => {
-      // Assert
-      expect(startTimeInput).toHaveValue(null);
-    });
-    test("no actions should be dispatched", async () => {
-      // Assert
-      expect(dispatch).not.toHaveBeenCalled();
-    });
-    test("error message should be displayed", async () => {
-      const startTimeInvalidInputMessage = getByTestId(
+      startTimeInvalidInputMessage = screen.getByTestId(
         "start-time-invalid-input"
       );
       expect(startTimeInvalidInputMessage).toBeInTheDocument();
+      expect(startTimeInput).toHaveValue(null);
+    }
+  );
+
+  test("start time input should update its value when the user changes it", async () => {
+    renderWithRedux(<ClipEditForm />, preloadedState);
+
+    let startTimeInput = screen.getByTestId("loop-start-time");
+    const newStartTimeValue = clip.startTime + 1;
+
+    await userEvent.type(startTimeInput, newStartTimeValue.toString(), {
+      allAtOnce: true
     });
+
+    expect(startTimeInput).toHaveValue(newStartTimeValue);
   });
 
-  describe("updateClip should be dispatched appropriately", () => {
-    each([
-      ["loop-start-time", "startTime"],
-      ["loop-end-time", "endTime"],
-      ["transcription-input", "transcription"]
-    ]).test("when user changes %s", async (inputTestId, clipProperty) => {
-      // Act
-      const { getByTestId } = render(<ClipEditForm />);
+  test("end time input should update its value when the user changes it", async () => {
+    renderWithRedux(<ClipEditForm />, preloadedState);
 
-      const clipInput = getByTestId(inputTestId);
+    let endTimeInput = screen.getByTestId("loop-end-time");
 
-      let newInputValue;
-      if (clipInput.type === "number") {
-        newInputValue = parseInt(clipInput.value) + 1;
-      } else {
-        newInputValue = clipInput.value + "!";
-      }
+    const newEndTimeValue = parseInt(endTimeInput.value) + 1;
 
-      // Act
-      await userEvent.type(clipInput, String(newInputValue), {
-        allAtOnce: true
-      });
-
-      // Assert
-      expect(updateClip).toHaveBeenCalledWith(
-        {
-          ...clip,
-          [clipProperty]: newInputValue
-        },
-        currentClipIndex
-      );
-      expect(dispatch).toHaveBeenCalledWith(updateClipReturnValue);
+    await userEvent.type(endTimeInput, newEndTimeValue.toString(), {
+      allAtOnce: true
     });
+
+    expect(endTimeInput).toHaveValue(newEndTimeValue);
+  });
+
+  test("transcription input should update its value when the user changes it", async () => {
+    renderWithRedux(<ClipEditForm />, preloadedState);
+
+    let transcriptionInput = screen.getByTestId("transcription-input");
+    const newTranscriptionValue = transcriptionInput.value + "!";
+
+    await userEvent.type(transcriptionInput, newTranscriptionValue, {
+      allAtOnce: true
+    });
+
+    expect(transcriptionInput).toHaveValue(newTranscriptionValue);
   });
 });

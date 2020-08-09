@@ -6,7 +6,7 @@ import React from "react";
 import "App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { getCurrentClipIndex } from "redux/selectors";
-import { getClips } from "redux/clips/selectors";
+import { getClips } from "redux/selectors";
 import { changeClip } from "clipNavigation";
 
 const App = () => {
@@ -17,7 +17,7 @@ const App = () => {
   return (
     <div className="App" data-testid={"app"}>
       <main>
-        <ClipPlayer />
+        {clips.length > 0 && <ClipPlayer />}
         <ClipAdder />
         <div>
           <NavigationButton
